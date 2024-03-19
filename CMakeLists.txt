@@ -4,6 +4,13 @@ project(ray-tracer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB_RECURSE SRCS src/*.cc)
+file(GLOB_RECURSE SRCS
+  ${CMAKE_SOURCE_DIR}/src/*.cc
+  ${CMAKE_SOURCE_DIR}/external/tinyxml2/tinyxml2.cc
+)
 
 add_executable(${PROJECT_NAME} ${SRCS})
+
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
+  ${CMAKE_SOURCE_DIR}/external
+)
