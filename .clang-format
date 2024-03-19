@@ -5,6 +5,8 @@ PointerAlignment: Left
 IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '".*"'
+    Priority: 4
+  - Regex: '<rt/.*\.hh>'
     Priority: 3
   - Regex: '<.*\.hh>'
     Priority: 2

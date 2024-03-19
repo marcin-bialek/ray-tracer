@@ -11,6 +11,10 @@ file(GLOB_RECURSE SRCS
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
   ${CMAKE_SOURCE_DIR}/external
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+  ${CMAKE_SOURCE_DIR}/src
 )

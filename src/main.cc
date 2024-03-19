@@ -3,6 +3,8 @@
 #include <argparse/argparse.hh>
 #include <tinyxml2/tinyxml2.hh>
 
+#include <rt/math/vector3.hh>
+
 int main(int argc, char* argv[]) {
   argparse::ArgumentParser parser{"ray-tracer"};
   parser.add_argument("input_file").required().help("XML input file");
