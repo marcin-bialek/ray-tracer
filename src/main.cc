@@ -4,7 +4,8 @@
 #include <tinyxml2/tinyxml2.hh>
 
 #include <rt/loaders/scene_loader.hh>
-#include <rt/math/vector3.hh>
+#include <rt/renderer/renderer.hh>
+#include <rt/writers/image_writer.hh>
 
 int main(int argc, char* argv[]) {
   argparse::ArgumentParser parser{"ray-tracer"};
@@ -40,4 +41,10 @@ int main(int argc, char* argv[]) {
   }
 
   std::cout << scene->ToString() << std::endl;
+
+  rt::Renderer renderer{};
+  auto image = renderer.Render(*scene);
+
+  rt::ImagerWriter writer{"image.png"};
+  writer.Write(image);
 }

@@ -1,6 +1,12 @@
 #include "scene.hh"
 
+#include <format>
+
 namespace rt {
+
+const Color& Scene::background() const noexcept {
+  return background_;
+}
 
 Camera* Scene::camera() noexcept {
   return camera_.get();
@@ -8,6 +14,11 @@ Camera* Scene::camera() noexcept {
 
 const Camera* Scene::camera() const noexcept {
   return camera_.get();
+}
+
+Scene& Scene::SetBackground(const Color& color) noexcept {
+  background_ = color;
+  return *this;
 }
 
 Scene& Scene::SetCamera(std::unique_ptr<Camera> camera) noexcept {
@@ -27,6 +38,7 @@ Scene& Scene::AddSurface(std::unique_ptr<Surface> surface) noexcept {
 
 std::string Scene::ToString() const {
   std::string str = "Scene\n";
+  str += std::format("  background = {}\n", background_.ToString());
   str += camera_->ToString();
   for (auto& light : lights_) {
     str += light->ToString();

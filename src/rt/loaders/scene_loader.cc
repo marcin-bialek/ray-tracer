@@ -6,6 +6,7 @@
 
 #include "ambient_light_loader.hh"
 #include "camera_loader.hh"
+#include "common.hh"
 #include "parallel_light_loader.hh"
 #include "point_light_loader.hh"
 #include "sphere_loader.hh"
@@ -19,10 +20,18 @@ SceneLoader::SceneLoader(tinyxml2::XMLDocument* document) noexcept
 std::unique_ptr<Scene> SceneLoader::Load() {
   scene_ = std::make_unique<Scene>();
   auto elm_scene = document_->FirstChildElement();
+  LoadBackground(elm_scene->FirstChildElement("background_color"));
   LoadCamera(elm_scene->FirstChildElement("camera"));
   LoadLights(elm_scene->FirstChildElement("lights"));
   LoadSurfaces(elm_scene->FirstChildElement("surfaces"));
   return std::move(scene_);
+}
+
+void SceneLoader::LoadBackground(tinyxml2::XMLElement* element) {
+  if (!element) {
+    throw RuntimeError{"error loading scene: no background color"};
+  }
+  scene_->SetBackground(details::LoadColor(element));
 }
 
 void SceneLoader::LoadCamera(tinyxml2::XMLElement* element) {

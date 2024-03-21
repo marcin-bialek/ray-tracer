@@ -18,6 +18,7 @@ class SceneLoader {
   tinyxml2::XMLDocument* document_;
   std::unique_ptr<Scene> scene_;
 
+  void LoadBackground(tinyxml2::XMLElement* element);
   void LoadCamera(tinyxml2::XMLElement* element);
   void LoadLights(tinyxml2::XMLElement* element);
   void LoadSurfaces(tinyxml2::XMLElement* element);
