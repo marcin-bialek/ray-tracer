@@ -11,16 +11,16 @@ class Sphere : public Surface {
   explicit Sphere() noexcept = default;
 
   const Vector3<>& position() const noexcept;
-  float radius() const noexcept;
+  double radius() const noexcept;
 
   Sphere& SetPosition(const Vector3<>& value) noexcept;
-  Sphere& SetRadius(float value) noexcept;
+  Sphere& SetRadius(double value) noexcept;
 
   std::string ToString() const override;
 
  private:
   Vector3<> position_;
-  float radius_;
+  double radius_;
 };
 
 }  // namespace rt

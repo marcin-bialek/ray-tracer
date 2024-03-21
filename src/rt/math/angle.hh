@@ -7,7 +7,7 @@
 
 namespace rt {
 
-template <Numeric Tp = float>
+template <Numeric Tp = double>
 class Angle {
  public:
   constexpr Angle() noexcept = default;

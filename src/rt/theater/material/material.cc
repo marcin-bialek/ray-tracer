@@ -6,19 +6,20 @@ const Material::Phong& Material::phong() const noexcept {
   return phong_;
 }
 
-float Material::reflectance() const noexcept {
+double Material::reflectance() const noexcept {
   return reflectance_;
 }
 
-float Material::transmittance() const noexcept {
+double Material::transmittance() const noexcept {
   return transmittance_;
 }
 
-float Material::refraction() const noexcept {
+double Material::refraction() const noexcept {
   return refraction_;
 }
 
-Material& Material::SetPhong(float ka, float kd, float ks, float exp) noexcept {
+Material& Material::SetPhong(double ka, double kd, double ks,
+                             double exp) noexcept {
   phong_.ka = ka;
   phong_.kd = kd;
   phong_.ks = ks;
@@ -26,17 +27,17 @@ Material& Material::SetPhong(float ka, float kd, float ks, float exp) noexcept {
   return *this;
 }
 
-Material& Material::SetReflectance(float value) noexcept {
+Material& Material::SetReflectance(double value) noexcept {
   reflectance_ = value;
   return *this;
 }
 
-Material& Material::SetTransmittance(float value) noexcept {
+Material& Material::SetTransmittance(double value) noexcept {
   transmittance_ = value;
   return *this;
 }
 
-Material& Material::SetRefraction(float value) noexcept {
+Material& Material::SetRefraction(double value) noexcept {
   refraction_ = value;
   return *this;
 }

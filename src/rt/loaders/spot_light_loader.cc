@@ -52,8 +52,8 @@ void SpotLightLoader::LoadDirection() {
 void SpotLightLoader::LoadFalloff() {
   auto elm_falloff = element_->FirstChildElement("falloff");
   if (elm_falloff) {
-    auto a1 = Angle{std::stof(elm_falloff->Attribute("alpha1"))};
-    auto a2 = Angle{std::stof(elm_falloff->Attribute("alpha2"))};
+    auto a1 = Angle{elm_falloff->DoubleAttribute("alpha1")};
+    auto a2 = Angle{elm_falloff->DoubleAttribute("alpha2")};
     light_->SetFallof(a1, a2);
   } else {
     throw RuntimeError{"falloff is not set"};

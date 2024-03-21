@@ -32,7 +32,7 @@ void SphereLoader::LoadPosition() {
 }
 
 void SphereLoader::LoadRadius() {
-  sphere_->SetRadius(element_->FloatAttribute("radius"));
+  sphere_->SetRadius(element_->DoubleAttribute("radius"));
 }
 
 void SphereLoader::LoadMaterial() {

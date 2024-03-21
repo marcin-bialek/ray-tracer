@@ -19,7 +19,7 @@ Vector3<> LoadVector3(tinyxml2::XMLElement* element) {
   if (!attr_z) {
     throw RuntimeError{"error parsing vector, no z coordinate"};
   }
-  return {std::stof(attr_x), std::stof(attr_y), std::stof(attr_z)};
+  return {std::stod(attr_x), std::stod(attr_y), std::stod(attr_z)};
 }
 
 Color LoadColor(tinyxml2::XMLElement* element) {
@@ -35,7 +35,7 @@ Color LoadColor(tinyxml2::XMLElement* element) {
   if (!attr_b) {
     throw RuntimeError{"error parsing color, no blue value"};
   }
-  return {std::stof(attr_r), std::stof(attr_g), std::stof(attr_b)};
+  return {std::stod(attr_r), std::stod(attr_g), std::stod(attr_b)};
 }
 
 }  // namespace rt::details

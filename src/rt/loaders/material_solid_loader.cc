@@ -35,10 +35,10 @@ void MaterialSolidLoader::LoadColor() {
 void MaterialSolidLoader::LoadPhong() {
   auto elm_phong = element_->FirstChildElement("phong");
   if (elm_phong) {
-    auto ka = elm_phong->FloatAttribute("ka");
-    auto kd = elm_phong->FloatAttribute("kd");
-    auto ks = elm_phong->FloatAttribute("ks");
-    auto exp = elm_phong->FloatAttribute("exponent");
+    auto ka = elm_phong->DoubleAttribute("ka");
+    auto kd = elm_phong->DoubleAttribute("kd");
+    auto ks = elm_phong->DoubleAttribute("ks");
+    auto exp = elm_phong->DoubleAttribute("exponent");
     material_->SetPhong(ka, kd, ks, exp);
   } else {
     throw RuntimeError{"phong is not set"};
@@ -48,7 +48,7 @@ void MaterialSolidLoader::LoadPhong() {
 void MaterialSolidLoader::LoadReflectance() {
   auto elm_reflectance = element_->FirstChildElement("reflectance");
   if (elm_reflectance) {
-    auto r = elm_reflectance->FloatAttribute("r");
+    auto r = elm_reflectance->DoubleAttribute("r");
     material_->SetReflectance(r);
   } else {
     throw RuntimeError{"reflectance is not set"};
@@ -58,7 +58,7 @@ void MaterialSolidLoader::LoadReflectance() {
 void MaterialSolidLoader::LoadTransmittance() {
   auto elm_transmittance = element_->FirstChildElement("transmittance");
   if (elm_transmittance) {
-    auto t = elm_transmittance->FloatAttribute("t");
+    auto t = elm_transmittance->DoubleAttribute("t");
     material_->SetTransmittance(t);
   } else {
     throw RuntimeError{"transmittance is not set"};
@@ -68,7 +68,7 @@ void MaterialSolidLoader::LoadTransmittance() {
 void MaterialSolidLoader::LoadRefraction() {
   auto elm_refraction = element_->FirstChildElement("refraction");
   if (elm_refraction) {
-    auto iof = elm_refraction->FloatAttribute("iof");
+    auto iof = elm_refraction->DoubleAttribute("iof");
     material_->SetRefraction(iof);
   } else {
     throw RuntimeError{"refraction is not set"};

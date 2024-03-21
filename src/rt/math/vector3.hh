@@ -7,7 +7,7 @@
 
 namespace rt {
 
-template <Numeric Tp = float>
+template <Numeric Tp = double>
 struct Vector3 {
   Tp x{};
   Tp y{};

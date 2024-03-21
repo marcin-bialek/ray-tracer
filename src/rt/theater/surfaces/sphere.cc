@@ -8,7 +8,7 @@ const Vector3<>& Sphere::position() const noexcept {
   return position_;
 }
 
-float Sphere::radius() const noexcept {
+double Sphere::radius() const noexcept {
   return radius_;
 }
 
@@ -17,7 +17,7 @@ Sphere& Sphere::SetPosition(const Vector3<>& value) noexcept {
   return *this;
 }
 
-Sphere& Sphere::SetRadius(float value) noexcept {
+Sphere& Sphere::SetRadius(double value) noexcept {
   radius_ = value;
   return *this;
 }
