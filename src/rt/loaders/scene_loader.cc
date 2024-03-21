@@ -8,6 +8,7 @@
 #include "camera_loader.hh"
 #include "parallel_light_loader.hh"
 #include "point_light_loader.hh"
+#include "sphere_loader.hh"
 #include "spot_light_loader.hh"
 
 namespace rt {
@@ -20,6 +21,7 @@ std::unique_ptr<Scene> SceneLoader::Load() {
   auto elm_scene = document_->FirstChildElement();
   LoadCamera(elm_scene->FirstChildElement("camera"));
   LoadLights(elm_scene->FirstChildElement("lights"));
+  LoadSurfaces(elm_scene->FirstChildElement("surfaces"));
   return std::move(scene_);
 }
 
@@ -49,6 +51,22 @@ void SceneLoader::LoadLights(tinyxml2::XMLElement* element) {
       scene_->AddLight(loader.Load());
     } else {
       std::cerr << std::format("Warning: unknown light type {}, skipped", name)
+                << std::endl;
+    }
+    elm = elm->NextSiblingElement();
+  }
+}
+
+void SceneLoader::LoadSurfaces(tinyxml2::XMLElement* element) {
+  auto elm = element->FirstChildElement();
+  while (elm) {
+    auto name = std::string_view{elm->Name()};
+    if (name == "sphere") {
+      SphereLoader loader{elm};
+      scene_->AddSurface(loader.Load());
+    } else {
+      std::cerr << std::format("Warning: unknown surface type {}, skipped",
+                               name)
                 << std::endl;
     }
     elm = elm->NextSiblingElement();

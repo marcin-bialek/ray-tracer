@@ -20,6 +20,7 @@ class SceneLoader {
 
   void LoadCamera(tinyxml2::XMLElement* element);
   void LoadLights(tinyxml2::XMLElement* element);
+  void LoadSurfaces(tinyxml2::XMLElement* element);
 };
 
 }  // namespace rt

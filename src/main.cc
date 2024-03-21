@@ -9,6 +9,10 @@
 int main(int argc, char* argv[]) {
   argparse::ArgumentParser parser{"ray-tracer"};
   parser.add_argument("input_file").required().help("XML input file");
+  parser.add_argument("-r", "--resolution")
+      .nargs(2)
+      .scan<'u', std::size_t>()
+      .help("custom resolution");
 
   try {
     parser.parse_args(argc, argv);
@@ -26,7 +30,14 @@ int main(int argc, char* argv[]) {
               << std::endl;
     return EXIT_FAILURE;
   }
+
   rt::SceneLoader loader{&input_file};
   auto scene = loader.Load();
+
+  auto resolution = parser.present<std::vector<std::size_t>>("-r");
+  if (resolution.has_value()) {
+    scene->camera()->SetResolution(resolution->at(0), resolution->at(1));
+  }
+
   std::cout << scene->ToString() << std::endl;
 }
