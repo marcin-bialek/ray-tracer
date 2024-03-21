@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -19,6 +20,7 @@ class Scene {
   const Color& background() const noexcept;
   Camera* camera() noexcept;
   const Camera* camera() const noexcept;
+  std::span<const std::unique_ptr<Surface>> surfaces() const noexcept;
 
   Scene& SetBackground(const Color& color) noexcept;
   Scene& SetCamera(std::unique_ptr<Camera> camera) noexcept;

@@ -1,11 +1,15 @@
 #include "renderer.hh"
 
+#include <iostream>
+
 #include "ray.hh"
 
 namespace rt {
 
 Image Renderer::Render(const Scene& scene) {
   auto camera = scene.camera();
+  auto surfaces = scene.surfaces();
+
   Image image{camera->width(), camera->height(), scene.background()};
 
   auto aspect_ratio = static_cast<double>(camera->height()) /
@@ -38,6 +42,12 @@ Image Renderer::Render(const Scene& scene) {
       auto a = 0.5 * (ray.direction.y + 1.0);
       auto c = (1.0 - a) * Color{1.0, 1.0, 1.0} + a * Color{0.5, 0.7, 1.0};
       image[{x, y}] = c;
+
+      for (auto& s : surfaces) {
+        if (s->DoesHit(ray)) {
+          image[{x, y}] = Color{1.0, 0.0, 0.0};
+        }
+      }
     }
   }
 

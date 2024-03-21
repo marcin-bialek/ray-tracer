@@ -16,6 +16,7 @@ class Sphere : public Surface {
   Sphere& SetPosition(const Vector3<>& value) noexcept;
   Sphere& SetRadius(double value) noexcept;
 
+  bool DoesHit(const Ray& ray) const override;
   std::string ToString() const override;
 
  private:

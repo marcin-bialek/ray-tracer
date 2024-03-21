@@ -16,6 +16,10 @@ const Camera* Scene::camera() const noexcept {
   return camera_.get();
 }
 
+std::span<const std::unique_ptr<Surface>> Scene::surfaces() const noexcept {
+  return surfaces_;
+}
+
 Scene& Scene::SetBackground(const Color& color) noexcept {
   background_ = color;
   return *this;

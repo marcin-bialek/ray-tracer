@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <rt/renderer/ray.hh>
 #include <rt/theater/material/material.hh>
 
 namespace rt {
@@ -14,6 +15,7 @@ class Surface {
 
   Surface& SetMaterial(std::unique_ptr<Material> material) noexcept;
 
+  virtual bool DoesHit(const Ray& ray) const = 0;
   virtual std::string ToString() const = 0;
 
  protected:
