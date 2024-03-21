@@ -40,6 +40,11 @@ struct Vector3 {
     };
   }
 
+  Vector3<Tp> Unit() const noexcept {
+    auto l = Length();
+    return {x / l, y / l, z / l};
+  }
+
   std::string ToString() const {
     return std::format("{{{:.2f}, {:.2f}, {:.2f}}}", x, y, z);
   }
@@ -62,14 +67,27 @@ constexpr Vector3<Tp> operator-(const Vector3<Tp>& a,
   return a.Substract(b);
 }
 
-template <Numeric Tp>
-constexpr Vector3<Tp> operator*(Tp s, const Vector3<Tp>& v) noexcept {
-  return {s * v.x, s * v.y, s * v.z};
+template <Numeric Tp, Numeric Up>
+constexpr Vector3<Tp> operator*(Up s, const Vector3<Tp>& v) noexcept {
+  return {
+      static_cast<Tp>(s * v.x),
+      static_cast<Tp>(s * v.y),
+      static_cast<Tp>(s * v.z),
+  };
 }
 
-template <Numeric Tp>
-constexpr Vector3<Tp> operator*(const Vector3<Tp>& v, Tp s) noexcept {
-  return {s * v.x, s * v.y, s * v.z};
+template <Numeric Tp, Numeric Up>
+constexpr Vector3<Tp> operator*(const Vector3<Tp>& v, Up s) noexcept {
+  return s * v;
+}
+
+template <Numeric Tp, Numeric Up>
+constexpr Vector3<Tp> operator/(const Vector3<Tp>& v, Up s) noexcept {
+  return {
+      static_cast<Tp>(v.x / s),
+      static_cast<Tp>(v.y / s),
+      static_cast<Tp>(v.z / s),
+  };
 }
 
 template <Numeric Tp>
