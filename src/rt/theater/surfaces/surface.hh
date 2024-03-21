@@ -15,7 +15,8 @@ class Surface {
 
   Surface& SetMaterial(std::unique_ptr<Material> material) noexcept;
 
-  virtual bool DoesHit(const Ray& ray) const = 0;
+  virtual double Intersection(const Ray& ray) const = 0;
+  virtual Vector3<> Normal(const Vector3<>& v) const = 0;
   virtual std::string ToString() const = 0;
 
  protected:

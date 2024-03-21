@@ -16,7 +16,8 @@ class Sphere : public Surface {
   Sphere& SetPosition(const Vector3<>& value) noexcept;
   Sphere& SetRadius(double value) noexcept;
 
-  bool DoesHit(const Ray& ray) const override;
+  double Intersection(const Ray& ray) const override;
+  Vector3<> Normal(const Vector3<>& v) const override;
   std::string ToString() const override;
 
  private:

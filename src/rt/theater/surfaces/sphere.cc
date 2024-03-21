@@ -22,13 +22,23 @@ Sphere& Sphere::SetRadius(double value) noexcept {
   return *this;
 }
 
-bool Sphere::DoesHit(const Ray& ray) const {
-  auto oc = ray.origin - position_;
+double Sphere::Intersection(const Ray& ray) const {
+  auto op = ray.origin - position_;
   auto a = ray.direction.Dot(ray.direction);
-  auto b = 2.0 * oc.Dot(ray.direction);
-  auto c = oc.Dot(oc) - radius_ * radius_;
-  auto disc = b * b - 4 * a * c;
-  return disc >= 0;
+  auto b = 2.0 * op.Dot(ray.direction);
+  auto c = op.Dot(op) - radius_ * radius_;
+  auto d = b * b - 4 * a * c;
+  if (d < 0) {
+    return -1.0;
+  }
+  auto sd = std::sqrt(d);
+  auto t0 = (-b - sd) / (2 * a);
+  auto t1 = (-b + sd) / (2 * a);
+  return std::min(t0, t1);
+}
+
+Vector3<> Sphere::Normal(const Vector3<>& v) const {
+  return (v - position_).Unit();
 }
 
 std::string Sphere::ToString() const {

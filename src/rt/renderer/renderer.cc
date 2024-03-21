@@ -44,9 +44,12 @@ Image Renderer::Render(const Scene& scene) {
       image[{x, y}] = c;
 
       for (auto& s : surfaces) {
-        if (s->DoesHit(ray)) {
-          image[{x, y}] = Color{1.0, 0.0, 0.0};
+        auto t = s->Intersection(ray);
+        if (t < 0) {
+          continue;
         }
+        auto n = s->Normal(ray.At(t));
+        image[{x, y}] = Color{n.x + 1, n.y + 1, n.z + 1} / 2.0;
       }
     }
   }
