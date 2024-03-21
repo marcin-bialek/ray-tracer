@@ -3,6 +3,7 @@
 #include <argparse/argparse.hh>
 #include <tinyxml2/tinyxml2.hh>
 
+#include <rt/loaders/scene_loader.hh>
 #include <rt/math/vector3.hh>
 
 int main(int argc, char* argv[]) {
@@ -25,4 +26,7 @@ int main(int argc, char* argv[]) {
               << std::endl;
     return EXIT_FAILURE;
   }
+  rt::SceneLoader loader{&input_file};
+  auto scene = loader.Load();
+  std::cout << scene->ToString() << std::endl;
 }

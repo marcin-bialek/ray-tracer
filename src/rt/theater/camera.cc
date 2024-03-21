@@ -2,16 +2,20 @@
 
 namespace rt {
 
-Vector3<> Camera::position() const noexcept {
+const Vector3<>& Camera::position() const noexcept {
   return position_;
 }
 
-Vector3<> Camera::lookat() const noexcept {
+const Vector3<>& Camera::lookat() const noexcept {
   return lookat_;
 }
 
-Vector3<> Camera::up() const noexcept {
+const Vector3<>& Camera::up() const noexcept {
   return up_;
+}
+
+const Angle<>& Camera::horizontal_fov() const noexcept {
+  return horizontal_fov_;
 }
 
 std::size_t Camera::width() const noexcept {
@@ -24,10 +28,6 @@ std::size_t Camera::height() const noexcept {
 
 std::size_t Camera::max_bounces() const noexcept {
   return max_bounces_;
-}
-
-float Camera::horizontal_fov() const noexcept {
-  return horizontal_fov_;
 }
 
 Camera& Camera::SetPosition(const Vector3<>& value) noexcept {
@@ -45,6 +45,11 @@ Camera& Camera::SetUp(const Vector3<>& value) noexcept {
   return *this;
 }
 
+Camera& Camera::SetHorizontalFov(const Angle<>& value) noexcept {
+  horizontal_fov_ = value;
+  return *this;
+}
+
 Camera& Camera::SetResolution(std::size_t width, std::size_t height) noexcept {
   width_ = width;
   height_ = height;
@@ -56,9 +61,15 @@ Camera& Camera::SetMaxBounces(std::size_t value) noexcept {
   return *this;
 }
 
-Camera& Camera::SetHorizontalFov(float value) noexcept {
-  horizontal_fov_ = value;
-  return *this;
+std::string Camera::ToString() const {
+  std::string str = "Camera\n";
+  str += std::format("  position = {}\n", position_.ToString());
+  str += std::format("  lookat = {}\n", lookat_.ToString());
+  str += std::format("  up = {}\n", up_.ToString());
+  str += std::format("  horizontal fov = {}\n", horizontal_fov_.ToString());
+  str += std::format("  resolution = {} x {}\n", width_, height_);
+  str += std::format("  max bounces = {}\n", max_bounces_);
+  return str;
 }
 
 }  // namespace rt

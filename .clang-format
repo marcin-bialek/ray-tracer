@@ -2,15 +2,17 @@ BasedOnStyle: Google
 AllowShortFunctionsOnASingleLine: Empty
 PointerAlignment: Left
 
+SortIncludes: true
 IncludeBlocks: Regroup
+IncludeIsMainSourceRegex: '$?'
 IncludeCategories:
   - Regex: '".*"'
-    Priority: 4
+    Priority: 5
   - Regex: '<rt/.*\.hh>'
-    Priority: 3
+    Priority: 4
   - Regex: '<.*\.hh>'
-    Priority: 2
+    Priority: 3
   - Regex: '<.*\.h>'
-    Priority: 1
+    Priority: 2
   - Regex: '<.*>'
-    Priority: 0
+    Priority: 1

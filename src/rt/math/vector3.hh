@@ -1,10 +1,13 @@
 #pragma once
 
 #include <cmath>
+#include <format>
+
+#include <rt/common/concepts.hh>
 
 namespace rt {
 
-template <typename Tp = float>
+template <Numeric Tp = float>
 struct Vector3 {
   Tp x{};
   Tp y{};
@@ -36,33 +39,43 @@ struct Vector3 {
         x * v.y - y * v.x,
     };
   }
+
+  std::string ToString() const {
+    return std::format("{{{:.2f}, {:.2f}, {:.2f}}}", x, y, z);
+  }
 };
 
-template <typename Tp>
+template <Numeric Tp>
 constexpr Vector3<Tp> operator+(const Vector3<Tp>& a,
                                 const Vector3<Tp>& b) noexcept {
   return a.Add(b);
 }
 
-template <typename Tp>
+template <Numeric Tp>
 constexpr Vector3<Tp> operator-(const Vector3<Tp>& a) noexcept {
   return {-a.x, -a.y, -a.z};
 }
 
-template <typename Tp>
+template <Numeric Tp>
 constexpr Vector3<Tp> operator-(const Vector3<Tp>& a,
                                 const Vector3<Tp>& b) noexcept {
   return a.Substract(b);
 }
 
-template <typename Tp>
+template <Numeric Tp>
 constexpr Vector3<Tp> operator*(Tp s, const Vector3<Tp>& v) noexcept {
   return {s * v.x, s * v.y, s * v.z};
 }
 
-template <typename Tp>
+template <Numeric Tp>
 constexpr Vector3<Tp> operator*(const Vector3<Tp>& v, Tp s) noexcept {
   return {s * v.x, s * v.y, s * v.z};
+}
+
+template <Numeric Tp>
+constexpr Vector3<Tp> operator*(const Vector3<Tp>& a,
+                                const Vector3<Tp>& b) noexcept {
+  return a.Cross(b);
 }
 
 }  // namespace rt
