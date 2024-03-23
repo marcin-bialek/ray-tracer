@@ -1,11 +1,18 @@
 #pragma once
 
+#include <optional>
 #include <string>
 
 #include <rt/renderer/ray.hh>
 #include <rt/theater/material/material.hh>
 
 namespace rt {
+
+struct Intersection {
+  Vector3<> point;
+  Vector3<> normal;
+  double distance;
+};
 
 class Surface {
  public:
@@ -15,13 +22,11 @@ class Surface {
 
   Surface& SetMaterial(std::unique_ptr<Material> material) noexcept;
 
-  virtual double Intersection(const Ray& ray) const = 0;
-  virtual Vector3<> Normal(const Vector3<>& hit_point) const = 0;
+  virtual std::optional<Intersection> Hit(const Ray& ray) const = 0;
   virtual std::string ToString() const = 0;
 
  protected:
   std::unique_ptr<Material> material_;
-  // TODO: transformations
 };
 
 }  // namespace rt

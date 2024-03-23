@@ -29,19 +29,19 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
 
 Vector3<> Renderer::ProcessRay(const Ray& ray) {
   Surface* surface = nullptr;
-  auto distance = std::numeric_limits<double>::infinity();
+  Intersection inter{};
+  inter.distance = std::numeric_limits<double>::infinity();
   for (auto& s : scene_->surfaces()) {
-    auto d = s->Intersection(ray);
-    if (0 <= d && d < distance) {
+    auto i = s->Hit(ray);
+    if (i.has_value() && i->distance < inter.distance) {
       surface = s.get();
-      distance = d;
+      inter = *i;
     }
   }
   if (!surface) {
     return scene_->background();
   }
 
-  auto normal = surface->Normal(ray.At(distance));
   auto material_color = surface->material()->GetColor();
   auto light_color = Vector3<>{0.0, 0.0, 0.0};
   auto ka = surface->material()->phong().ka;
@@ -55,7 +55,8 @@ Vector3<> Renderer::ProcessRay(const Ray& ray) {
     }
     auto parallel = dynamic_cast<ParallelLight*>(light.get());
     if (parallel) {
-      light_color += kd * std::max(0.0, parallel->direction().Dot(-normal)) *
+      light_color += kd *
+                     std::max(0.0, parallel->direction().Dot(-inter.normal)) *
                      parallel->color();
       continue;
     }
