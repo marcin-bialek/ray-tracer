@@ -37,8 +37,8 @@ double Sphere::Intersection(const Ray& ray) const {
   return std::min(t0, t1);
 }
 
-Vector3<> Sphere::Normal(const Vector3<>& v) const {
-  return (v - position_).Unit();
+Vector3<> Sphere::Normal(const Vector3<>& hit_point) const {
+  return (hit_point - position_).Unit();
 }
 
 std::string Sphere::ToString() const {

@@ -40,9 +40,26 @@ struct Vector3 {
     };
   }
 
+  constexpr Vector3<Tp> Hadamard(const Vector3<Tp>& v) const noexcept {
+    return {x * v.x, y * v.y, z * v.z};
+  }
+
   Vector3<Tp> Unit() const noexcept {
     auto l = Length();
     return {x / l, y / l, z / l};
+  }
+
+  constexpr Vector3<Tp> Min(Tp min) const noexcept {
+    return {std::min(x, min), std::min(y, min), std::min(z, min)};
+  }
+
+  constexpr Vector3<Tp> Max(Tp max) const noexcept {
+    return {std::max(x, max), std::max(y, max), std::max(z, max)};
+  }
+
+  constexpr Vector3<Tp> Clamp(Tp min, Tp max) const noexcept {
+    return {std::clamp(x, min, max), std::clamp(y, min, max),
+            std::clamp(z, min, max)};
   }
 
   std::string ToString() const {
@@ -94,6 +111,15 @@ template <Numeric Tp>
 constexpr Vector3<Tp> operator*(const Vector3<Tp>& a,
                                 const Vector3<Tp>& b) noexcept {
   return a.Cross(b);
+}
+
+template <Numeric Tp>
+constexpr Vector3<Tp>& operator+=(Vector3<Tp>& a,
+                                  const Vector3<Tp>& b) noexcept {
+  a.x += b.x;
+  a.y += b.y;
+  a.z += b.z;
+  return a;
 }
 
 }  // namespace rt

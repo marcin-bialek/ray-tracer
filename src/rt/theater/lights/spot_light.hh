@@ -1,6 +1,5 @@
 #pragma once
 
-#include <rt/common/color.hh>
 #include <rt/math/angle.hh>
 #include <rt/math/vector3.hh>
 
@@ -12,13 +11,13 @@ class SpotLight final : public Light {
  public:
   explicit SpotLight() = default;
 
-  const Color& color() const noexcept;
+  const Vector3<>& color() const noexcept;
   const Vector3<>& position() const noexcept;
   const Vector3<>& direction() const noexcept;
   const Angle<>& falloff_a1() const noexcept;
   const Angle<>& falloff_a2() const noexcept;
 
-  SpotLight& SetColor(const Color& value) noexcept;
+  SpotLight& SetColor(const Vector3<>& value) noexcept;
   SpotLight& SetPosition(const Vector3<>& value) noexcept;
   SpotLight& SetDirection(const Vector3<>& value) noexcept;
   SpotLight& SetFallof(const Angle<>& a1, const Angle<>& a2) noexcept;
@@ -26,7 +25,7 @@ class SpotLight final : public Light {
   std::string ToString() const override;
 
  public:
-  Color color_;
+  Vector3<> color_;
   Vector3<> position_;
   Vector3<> direction_;
   Angle<> falloff_a1_;

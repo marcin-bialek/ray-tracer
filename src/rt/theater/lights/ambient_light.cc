@@ -4,11 +4,11 @@
 
 namespace rt {
 
-const Color& AmbientLight::color() const noexcept {
+const Vector3<>& AmbientLight::color() const noexcept {
   return color_;
 }
 
-AmbientLight& AmbientLight::SetColor(const Color& value) noexcept {
+AmbientLight& AmbientLight::SetColor(const Vector3<>& value) noexcept {
   color_ = value;
   return *this;
 }

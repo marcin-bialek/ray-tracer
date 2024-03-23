@@ -46,5 +46,5 @@ int main(int argc, char* argv[]) {
   auto image = renderer.Render(*scene);
 
   rt::ImagerWriter writer{"image.png"};
-  writer.Write(image);
+  writer.Write(*image);
 }

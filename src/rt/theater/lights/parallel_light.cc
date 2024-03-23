@@ -2,7 +2,7 @@
 
 namespace rt {
 
-const Color& ParallelLight::color() const noexcept {
+const Vector3<>& ParallelLight::color() const noexcept {
   return color_;
 }
 
@@ -10,7 +10,7 @@ const Vector3<>& ParallelLight::direction() const noexcept {
   return direction_;
 }
 
-ParallelLight& ParallelLight::SetColor(const Color& value) noexcept {
+ParallelLight& ParallelLight::SetColor(const Vector3<>& value) noexcept {
   color_ = value;
   return *this;
 }

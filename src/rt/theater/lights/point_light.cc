@@ -2,7 +2,7 @@
 
 namespace rt {
 
-const Color& PointLight::color() const noexcept {
+const Vector3<>& PointLight::color() const noexcept {
   return color_;
 }
 
@@ -10,7 +10,7 @@ const Vector3<>& PointLight::position() const noexcept {
   return position_;
 }
 
-PointLight& PointLight::SetColor(const Color& value) noexcept {
+PointLight& PointLight::SetColor(const Vector3<>& value) noexcept {
   color_ = value;
   return *this;
 }

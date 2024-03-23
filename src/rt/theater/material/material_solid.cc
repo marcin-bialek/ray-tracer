@@ -4,13 +4,17 @@
 
 namespace rt {
 
-const Color& MaterialSolid::color() const noexcept {
+const Vector3<>& MaterialSolid::color() const noexcept {
   return color_;
 }
 
-MaterialSolid& MaterialSolid::SetColor(const Color& value) noexcept {
+MaterialSolid& MaterialSolid::SetColor(const Vector3<>& value) noexcept {
   color_ = value;
   return *this;
+}
+
+Vector3<> MaterialSolid::GetColor() const {
+  return color_;
 }
 
 std::string MaterialSolid::ToString() const {

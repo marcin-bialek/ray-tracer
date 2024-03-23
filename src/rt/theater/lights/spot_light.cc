@@ -2,7 +2,7 @@
 
 namespace rt {
 
-const Color& SpotLight::color() const noexcept {
+const Vector3<>& SpotLight::color() const noexcept {
   return color_;
 }
 
@@ -22,7 +22,7 @@ const Angle<>& SpotLight::falloff_a2() const noexcept {
   return falloff_a2_;
 }
 
-SpotLight& SpotLight::SetColor(const Color& value) noexcept {
+SpotLight& SpotLight::SetColor(const Vector3<>& value) noexcept {
   color_ = value;
   return *this;
 }

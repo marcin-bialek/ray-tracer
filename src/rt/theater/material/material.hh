@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <rt/math/vector3.hh>
+
 namespace rt {
 
 class Material {
@@ -25,6 +27,7 @@ class Material {
   Material& SetTransmittance(double value) noexcept;
   Material& SetRefraction(double value) noexcept;
 
+  virtual Vector3<> GetColor() const = 0;
   virtual std::string ToString() const = 0;
 
  protected:

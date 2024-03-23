@@ -4,7 +4,7 @@
 
 namespace rt {
 
-const Color& Scene::background() const noexcept {
+const Vector3<>& Scene::background() const noexcept {
   return background_;
 }
 
@@ -20,7 +20,11 @@ std::span<const std::unique_ptr<Surface>> Scene::surfaces() const noexcept {
   return surfaces_;
 }
 
-Scene& Scene::SetBackground(const Color& color) noexcept {
+std::span<const std::unique_ptr<Light>> Scene::lights() const noexcept {
+  return lights_;
+}
+
+Scene& Scene::SetBackground(const Vector3<>& color) noexcept {
   background_ = color;
   return *this;
 }

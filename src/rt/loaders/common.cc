@@ -22,7 +22,7 @@ Vector3<> LoadVector3(tinyxml2::XMLElement* element) {
   return {std::stod(attr_x), std::stod(attr_y), std::stod(attr_z)};
 }
 
-Color LoadColor(tinyxml2::XMLElement* element) {
+Vector3<> LoadColor(tinyxml2::XMLElement* element) {
   auto attr_r = element->Attribute("r");
   if (!attr_r) {
     throw RuntimeError{"error parsing color, no red value"};

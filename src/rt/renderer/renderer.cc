@@ -2,15 +2,15 @@
 
 #include <iostream>
 
-#include "ray.hh"
+#include <rt/theater/lights/ambient_light.hh>
+#include <rt/theater/lights/parallel_light.hh>
 
 namespace rt {
 
-Image Renderer::Render(const Scene& scene) {
+std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
   auto camera = scene.camera();
-  auto surfaces = scene.surfaces();
-
-  Image image{camera->width(), camera->height(), scene.background()};
+  scene_ = &scene;
+  image_ = std::make_unique<Image>(camera->width(), camera->height());
 
   auto aspect_ratio = static_cast<double>(camera->height()) /
                       static_cast<double>(camera->width());
@@ -37,24 +37,48 @@ Image Renderer::Render(const Scene& scene) {
     for (std::size_t x = 0; x < camera->width(); ++x) {
       auto pixel_center = pixel_origin + (x * du) + (y * dv);
       auto direction = (pixel_center - camera->position()).Unit();
-      Ray ray{camera->position(), direction};
-
-      auto a = 0.5 * (ray.direction.y + 1.0);
-      auto c = (1.0 - a) * Color{1.0, 1.0, 1.0} + a * Color{0.5, 0.7, 1.0};
-      image[{x, y}] = c;
-
-      for (auto& s : surfaces) {
-        auto t = s->Intersection(ray);
-        if (t < 0) {
-          continue;
-        }
-        auto n = s->Normal(ray.At(t));
-        image[{x, y}] = Color{n.x + 1, n.y + 1, n.z + 1} / 2.0;
-      }
+      (*image_)[{x, y}] = ProcessRay({camera->position(), direction});
     }
   }
 
-  return image;
+  return std::move(image_);
+}
+
+Vector3<> Renderer::ProcessRay(const Ray& ray) {
+  Surface* surface = nullptr;
+  auto distance = std::numeric_limits<double>::infinity();
+  for (auto& s : scene_->surfaces()) {
+    auto d = s->Intersection(ray);
+    if (0 <= d && d < distance) {
+      surface = s.get();
+      distance = d;
+    }
+  }
+  if (!surface) {
+    return scene_->background();
+  }
+
+  auto normal = surface->Normal(ray.At(distance));
+  auto material_color = surface->material()->GetColor();
+  auto light_color = Vector3<>{0.0, 0.0, 0.0};
+  auto ka = surface->material()->phong().ka;
+  auto kd = surface->material()->phong().kd;
+
+  for (auto& light : scene_->lights()) {
+    auto ambient = dynamic_cast<AmbientLight*>(light.get());
+    if (ambient) {
+      light_color += ka * ambient->color();
+      continue;
+    }
+    auto parallel = dynamic_cast<ParallelLight*>(light.get());
+    if (parallel) {
+      light_color += kd * std::max(0.0, parallel->direction().Dot(-normal)) *
+                     parallel->color();
+      continue;
+    }
+  }
+
+  return material_color.Hadamard(light_color).Clamp(0.0, 1.0);
 }
 
 }  // namespace rt

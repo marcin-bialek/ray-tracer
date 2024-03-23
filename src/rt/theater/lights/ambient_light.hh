@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rt/common/color.hh>
+#include <rt/math/vector3.hh>
 
 #include "light.hh"
 
@@ -10,14 +10,14 @@ class AmbientLight final : public Light {
  public:
   explicit AmbientLight() = default;
 
-  const Color& color() const noexcept;
+  const Vector3<>& color() const noexcept;
 
-  AmbientLight& SetColor(const Color& value) noexcept;
+  AmbientLight& SetColor(const Vector3<>& value) noexcept;
 
   std::string ToString() const override;
 
  public:
-  Color color_;
+  Vector3<> color_;
 };
 
 }  // namespace rt

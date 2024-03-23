@@ -1,7 +1,5 @@
 #pragma once
 
-#include <rt/common/color.hh>
-
 #include "material.hh"
 
 namespace rt {
@@ -10,14 +8,15 @@ class MaterialSolid : public Material {
  public:
   explicit MaterialSolid() noexcept = default;
 
-  const Color& color() const noexcept;
+  const Vector3<>& color() const noexcept;
 
-  MaterialSolid& SetColor(const Color& value) noexcept;
+  MaterialSolid& SetColor(const Vector3<>& value) noexcept;
 
+  Vector3<> GetColor() const override;
   std::string ToString() const override;
 
  private:
-  Color color_;
+  Vector3<> color_;
 };
 
 }  // namespace rt
