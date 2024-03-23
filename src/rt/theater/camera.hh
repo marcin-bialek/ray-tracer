@@ -8,6 +8,12 @@
 
 namespace rt {
 
+struct Viewport {
+  Vector3<> origin;
+  Vector3<> u;
+  Vector3<> v;
+};
+
 class Camera {
  public:
   static constexpr Angle<> kDefaultHorizontalFov = 45.0f;
@@ -24,6 +30,9 @@ class Camera {
   std::size_t width() const noexcept;
   std::size_t height() const noexcept;
   std::size_t max_bounces() const noexcept;
+  double aspect_ratio() const noexcept;
+  double focal_length() const noexcept;
+  Viewport viewport() const noexcept;
 
   Camera& SetPosition(const Vector3<>& value) noexcept;
   Camera& SetLookat(const Vector3<>& value) noexcept;

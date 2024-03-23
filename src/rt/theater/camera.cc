@@ -1,5 +1,7 @@
 #include "camera.hh"
 
+#include <cmath>
+
 namespace rt {
 
 const Vector3<>& Camera::position() const noexcept {
@@ -28,6 +30,29 @@ std::size_t Camera::height() const noexcept {
 
 std::size_t Camera::max_bounces() const noexcept {
   return max_bounces_;
+}
+
+double Camera::aspect_ratio() const noexcept {
+  return static_cast<double>(height_) / static_cast<double>(width_);
+}
+
+double Camera::focal_length() const noexcept {
+  return (position_ - lookat_).Length();
+}
+
+Viewport Camera::viewport() const noexcept {
+  auto fl = focal_length();
+  auto h = std::tan(horizontal_fov_.radians());
+  auto width = 2.0 * h * fl;
+  auto height = aspect_ratio() * width;
+  auto w = (position_ - lookat_).Unit();
+  auto u = (up_ * w).Unit();
+  auto v = w * u;
+  Viewport view{};
+  view.u = width * u;
+  view.v = height * -v;
+  view.origin = position_ - (fl * w) - (view.u / 2) - (view.v / 2);
+  return view;
 }
 
 Camera& Camera::SetPosition(const Vector3<>& value) noexcept {
