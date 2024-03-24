@@ -13,6 +13,10 @@ AmbientLight& AmbientLight::SetColor(const Vector3<>& value) noexcept {
   return *this;
 }
 
+std::optional<Ray> AmbientLight::GetShadowRay(const Vector3<>& origin) const {
+  return std::nullopt;
+}
+
 Vector3<> AmbientLight::Illuminate(const Ray& ray,
                                    const Intersection& intersection) const {
   return intersection.material->phong().ka * color_;

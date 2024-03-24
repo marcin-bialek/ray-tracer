@@ -24,6 +24,10 @@ ParallelLight& ParallelLight::SetDirection(const Vector3<>& value) noexcept {
   return *this;
 }
 
+std::optional<Ray> ParallelLight::GetShadowRay(const Vector3<>& origin) const {
+  return Ray{origin, -direction_};
+}
+
 Vector3<> ParallelLight::Illuminate(const Ray& ray,
                                     const Intersection& intersection) const {
   auto& phong = intersection.material->phong();
@@ -31,8 +35,8 @@ Vector3<> ParallelLight::Illuminate(const Ray& ray,
   auto V = -ray.direction;
   auto LN = L.Dot(intersection.normal);
   auto R = 2 * LN * intersection.normal - L;
-  auto d = std::clamp(phong.kd * LN, 0.0, 1.0);
-  auto s = phong.ks * std::pow(std::clamp(R.Dot(V), 0.0, 1.0), phong.exp);
+  auto d = std::max(0.0, phong.kd * LN);
+  auto s = phong.ks * std::pow(std::max(0.0, R.Dot(V)), phong.exp);
   return ((d + s) * color_).Clamp(0.0, 1.0);
 }
 

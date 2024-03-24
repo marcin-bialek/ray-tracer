@@ -45,6 +45,10 @@ SpotLight& SpotLight::SetFallof(const Angle<>& a1, const Angle<>& a2) noexcept {
   return *this;
 }
 
+std::optional<Ray> SpotLight::GetShadowRay(const Vector3<>& origin) const {
+  throw RuntimeError{"not implemented"};
+}
+
 Vector3<> SpotLight::Illuminate(const Ray& ray,
                                 const Intersection& intersection) const {
   throw RuntimeError{"not implemented"};

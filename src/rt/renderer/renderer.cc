@@ -29,28 +29,43 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
   return std::move(image_);
 }
 
-Vector3<> Renderer::ProcessRay(const Ray& ray, std::size_t bounces) {
-  if (bounces == 0) {
-    return scene_->background();
-  }
-  Surface* surface = nullptr;
+std::optional<Intersection> Renderer::Hit(const Ray& ray) {
+  bool hit = false;
   Intersection inter{};
   inter.distance = std::numeric_limits<double>::infinity();
   for (auto& s : scene_->surfaces()) {
     auto i = s->Hit(ray);
-    if (i.has_value() && i->distance < inter.distance) {
-      surface = s.get();
+    if (i.has_value() && 0.001 < i->distance && i->distance < inter.distance) {
+      hit = true;
       inter = *i;
     }
   }
-  if (!surface) {
+  if (!hit) {
+    return std::nullopt;
+  }
+  return inter;
+}
+
+Vector3<> Renderer::ProcessRay(const Ray& ray, std::size_t bounces) {
+  if (bounces == 0) {
+    return scene_->background();
+  }
+  auto inter = Hit(ray);
+  if (!inter.has_value()) {
     return scene_->background();
   }
   Vector3<> color{};
   for (auto& light : scene_->lights()) {
-    color += light->Illuminate(ray, inter);
+    auto shadow_ray = light->GetShadowRay(inter->point);
+    if (shadow_ray.has_value()) {
+      auto shadow_inter = Hit(*shadow_ray);
+      if (shadow_inter.has_value()) {
+        continue;
+      }
+    }
+    color += light->Illuminate(ray, *inter);
   }
-  return color.Hadamard(surface->material()->GetColor());
+  return color.Hadamard(inter->material->GetColor());
 }
 
 }  // namespace rt
