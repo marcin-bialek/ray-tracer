@@ -19,7 +19,7 @@ class Renderer {
   const Scene* scene_;
   std::unique_ptr<Image> image_;
 
-  Vector3<> ProcessRay(const Ray& ray);
+  Vector3<> ProcessRay(const Ray& ray, std::size_t bounces);
 };
 
 }  // namespace rt

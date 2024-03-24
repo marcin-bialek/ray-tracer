@@ -9,13 +9,19 @@ namespace rt {
 
 class ImagerWriter {
  public:
-  explicit ImagerWriter(const std::filesystem::path& path);
+  struct Config {
+    std::filesystem::path path;
+    bool gamma_correction = false;
+  };
+
+  explicit ImagerWriter(const Config& config);
 
   ~ImagerWriter() noexcept;
 
   void Write(const Image& image);
 
  private:
+  Config config_;
   struct Implementation;
   std::unique_ptr<Implementation> impl_;
 };

@@ -38,6 +38,10 @@ std::optional<Intersection> Sphere::Hit(const Ray& ray) const {
   inter.distance = std::min(t0, t1);
   inter.point = ray.At(inter.distance);
   inter.normal = (inter.point - position_).Unit();
+  inter.front = ray.direction.Dot(inter.normal) < 0.0;
+  if (!inter.front) {
+    inter.normal = -inter.normal;
+  }
   return inter;
 }
 

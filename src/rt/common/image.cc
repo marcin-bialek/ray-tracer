@@ -1,5 +1,7 @@
 #include "image.hh"
 
+#include <cmath>
+
 namespace rt {
 
 Image::Image(std::size_t width, std::size_t height)
@@ -18,15 +20,15 @@ std::size_t Image::height() const noexcept {
   return height_;
 }
 
-std::vector<uint8_t> Image::ToRGBBuffer() const {
-  std::vector<uint8_t> buffer(3 * width_ * height_, 0);
+std::vector<double> Image::ToRGBBuffer() const {
+  std::vector<double> buffer(3 * width_ * height_, 0);
   auto p = buffer.begin();
   for (auto& row : data_) {
     for (auto& pixel : row) {
-      auto c = 255.0 * pixel.Clamp(0.0, 1.0);
-      *p++ = static_cast<uint8_t>(c.x);
-      *p++ = static_cast<uint8_t>(c.y);
-      *p++ = static_cast<uint8_t>(c.z);
+      auto c = pixel.Clamp(0.0, 1.0);
+      *p++ = c.x;
+      *p++ = c.y;
+      *p++ = c.z;
     }
   }
   return buffer;

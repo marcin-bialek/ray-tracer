@@ -12,6 +12,7 @@ struct Intersection {
   Vector3<> point;
   Vector3<> normal;
   double distance;
+  bool front;
 };
 
 class Surface {
