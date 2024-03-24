@@ -1,5 +1,9 @@
 #include "parallel_light.hh"
 
+#include <cmath>
+
+#include <rt/common/exception.hh>
+
 namespace rt {
 
 const Vector3<>& ParallelLight::color() const noexcept {
@@ -16,8 +20,20 @@ ParallelLight& ParallelLight::SetColor(const Vector3<>& value) noexcept {
 }
 
 ParallelLight& ParallelLight::SetDirection(const Vector3<>& value) noexcept {
-  direction_ = value;
+  direction_ = value.Unit();
   return *this;
+}
+
+Vector3<> ParallelLight::Illuminate(const Ray& ray,
+                                    const Intersection& intersection) const {
+  auto& phong = intersection.material->phong();
+  auto L = -direction_;
+  auto V = -ray.direction;
+  auto LN = L.Dot(intersection.normal);
+  auto R = 2 * LN * intersection.normal - L;
+  auto d = std::clamp(phong.kd * LN, 0.0, 1.0);
+  auto s = phong.ks * std::pow(std::clamp(R.Dot(V), 0.0, 1.0), phong.exp);
+  return ((d + s) * color_).Clamp(0.0, 1.0);
 }
 
 std::string ParallelLight::ToString() const {

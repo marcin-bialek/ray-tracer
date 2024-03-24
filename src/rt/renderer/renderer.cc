@@ -46,10 +46,11 @@ Vector3<> Renderer::ProcessRay(const Ray& ray, std::size_t bounces) {
   if (!surface) {
     return scene_->background();
   }
-  auto ref = ray.direction - 2 * ray.direction.Dot(inter.normal) * inter.normal;
-  auto c0 = ProcessRay({inter.point, ref}, bounces - 1);
-  auto c1 = surface->material()->GetColor();
-  return 0.3 * c0 + 0.7 * c1;
+  Vector3<> color{};
+  for (auto& light : scene_->lights()) {
+    color += light->Illuminate(ray, inter);
+  }
+  return color.Hadamard(surface->material()->GetColor());
 }
 
 }  // namespace rt

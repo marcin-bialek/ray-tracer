@@ -3,17 +3,11 @@
 #include <optional>
 #include <string>
 
+#include <rt/renderer/intersection.hh>
 #include <rt/renderer/ray.hh>
 #include <rt/theater/material/material.hh>
 
 namespace rt {
-
-struct Intersection {
-  Vector3<> point;
-  Vector3<> normal;
-  double distance;
-  bool front;
-};
 
 class Surface {
  public:

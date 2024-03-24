@@ -9,9 +9,9 @@ namespace rt {
 
 template <Numeric Tp = double>
 struct Vector3 {
-  Tp x{};
-  Tp y{};
-  Tp z{};
+  Tp x{0};
+  Tp y{0};
+  Tp z{0};
 
   constexpr Vector3() noexcept {}
   constexpr Vector3(Tp x, Tp y, Tp z) noexcept : x{x}, y{y}, z{z} {}

@@ -35,6 +35,7 @@ std::optional<Intersection> Sphere::Hit(const Ray& ray) const {
   auto t0 = (-b - sd) / (2 * a);
   auto t1 = (-b + sd) / (2 * a);
   Intersection inter{};
+  inter.material = material_.get();
   inter.distance = std::min(t0, t1);
   inter.point = ray.At(inter.distance);
   inter.normal = (inter.point - position_).Unit();

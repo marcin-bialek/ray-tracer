@@ -1,5 +1,7 @@
 #include "spot_light.hh"
 
+#include <rt/common/exception.hh>
+
 namespace rt {
 
 const Vector3<>& SpotLight::color() const noexcept {
@@ -41,6 +43,11 @@ SpotLight& SpotLight::SetFallof(const Angle<>& a1, const Angle<>& a2) noexcept {
   falloff_a1_ = a1;
   falloff_a2_ = a2;
   return *this;
+}
+
+Vector3<> SpotLight::Illuminate(const Ray& ray,
+                                const Intersection& intersection) const {
+  throw RuntimeError{"not implemented"};
 }
 
 std::string SpotLight::ToString() const {

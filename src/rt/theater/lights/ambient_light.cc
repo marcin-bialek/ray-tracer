@@ -13,6 +13,11 @@ AmbientLight& AmbientLight::SetColor(const Vector3<>& value) noexcept {
   return *this;
 }
 
+Vector3<> AmbientLight::Illuminate(const Ray& ray,
+                                   const Intersection& intersection) const {
+  return intersection.material->phong().ka * color_;
+}
+
 std::string AmbientLight::ToString() const {
   std::string str = "AmbientLight\n";
   str += std::format("  color = {}\n", color_.ToString());

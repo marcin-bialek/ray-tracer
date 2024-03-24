@@ -16,6 +16,8 @@ class PointLight final : public Light {
   PointLight& SetColor(const Vector3<>& value) noexcept;
   PointLight& SetPosition(const Vector3<>& value) noexcept;
 
+  Vector3<> Illuminate(const Ray& ray,
+                       const Intersection& intersection) const override;
   std::string ToString() const override;
 
  public:

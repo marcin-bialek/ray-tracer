@@ -1,5 +1,7 @@
 #include "point_light.hh"
 
+#include <rt/common/exception.hh>
+
 namespace rt {
 
 const Vector3<>& PointLight::color() const noexcept {
@@ -18,6 +20,11 @@ PointLight& PointLight::SetColor(const Vector3<>& value) noexcept {
 PointLight& PointLight::SetPosition(const Vector3<>& value) noexcept {
   position_ = value;
   return *this;
+}
+
+Vector3<> PointLight::Illuminate(const Ray& ray,
+                                 const Intersection& intersection) const {
+  throw RuntimeError{"not implemented"};
 }
 
 std::string PointLight::ToString() const {

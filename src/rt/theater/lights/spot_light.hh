@@ -22,6 +22,8 @@ class SpotLight final : public Light {
   SpotLight& SetDirection(const Vector3<>& value) noexcept;
   SpotLight& SetFallof(const Angle<>& a1, const Angle<>& a2) noexcept;
 
+  Vector3<> Illuminate(const Ray& ray,
+                       const Intersection& intersection) const override;
   std::string ToString() const override;
 
  public:
