@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  rt::SceneLoader loader{&input_file};
+  rt::SceneLoader loader{
+      &input_file, std::filesystem::path{input_file_path}.remove_filename()};
   auto scene = loader.Load();
 
   auto resolution = parser.present<std::vector<std::size_t>>("-r");

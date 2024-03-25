@@ -7,6 +7,7 @@
 #include "ambient_light_loader.hh"
 #include "camera_loader.hh"
 #include "common.hh"
+#include "mesh_loader.hh"
 #include "parallel_light_loader.hh"
 #include "point_light_loader.hh"
 #include "sphere_loader.hh"
@@ -14,8 +15,9 @@
 
 namespace rt {
 
-SceneLoader::SceneLoader(tinyxml2::XMLDocument* document) noexcept
-    : document_{document} {}
+SceneLoader::SceneLoader(tinyxml2::XMLDocument* document,
+                         const std::filesystem::path& directory) noexcept
+    : document_{document}, directory_{directory} {}
 
 std::unique_ptr<Scene> SceneLoader::Load() {
   scene_ = std::make_unique<Scene>();
@@ -72,6 +74,9 @@ void SceneLoader::LoadSurfaces(tinyxml2::XMLElement* element) {
     auto name = std::string_view{elm->Name()};
     if (name == "sphere") {
       SphereLoader loader{elm};
+      scene_->AddSurface(loader.Load());
+    } else if (name == "mesh") {
+      MeshLoader loader{elm, directory_};
       scene_->AddSurface(loader.Load());
     } else {
       std::cerr << std::format("Warning: unknown surface type {}, skipped",

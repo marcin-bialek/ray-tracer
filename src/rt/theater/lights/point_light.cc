@@ -23,7 +23,7 @@ PointLight& PointLight::SetPosition(const Vector3<>& value) noexcept {
 }
 
 std::optional<Ray> PointLight::GetShadowRay(const Vector3<>& origin) const {
-  return Ray{origin, (origin - position_).Unit()};
+  return Ray{origin, (position_ - origin).Unit()};
 }
 
 Vector3<> PointLight::Illuminate(const Ray& ray,

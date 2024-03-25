@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <memory>
 
 #include <tinyxml2/tinyxml2.hh>
@@ -10,12 +11,14 @@ namespace rt {
 
 class SceneLoader {
  public:
-  explicit SceneLoader(tinyxml2::XMLDocument* document) noexcept;
+  explicit SceneLoader(tinyxml2::XMLDocument* document,
+                       const std::filesystem::path& directory) noexcept;
 
   std::unique_ptr<Scene> Load();
 
  private:
   tinyxml2::XMLDocument* document_;
+  std::filesystem::path directory_;
   std::unique_ptr<Scene> scene_;
 
   void LoadBackground(tinyxml2::XMLElement* element);
