@@ -27,7 +27,7 @@ class Material {
   Material& SetTransmittance(double value) noexcept;
   Material& SetRefraction(double value) noexcept;
 
-  virtual Vector3<> GetColor() const = 0;
+  virtual Vector3<> GetColor(double u, double v) const = 0;
   virtual std::string ToString() const = 0;
 
  protected:

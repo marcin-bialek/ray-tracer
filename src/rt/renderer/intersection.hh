@@ -11,6 +11,8 @@ struct Intersection {
   Vector3<> normal;
   double distance;
   bool front;
+  double u;
+  double v;
 };
 
 }  // namespace rt

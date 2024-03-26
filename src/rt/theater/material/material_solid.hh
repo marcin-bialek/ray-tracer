@@ -12,7 +12,7 @@ class MaterialSolid : public Material {
 
   MaterialSolid& SetColor(const Vector3<>& value) noexcept;
 
-  Vector3<> GetColor() const override;
+  Vector3<> GetColor(double u, double v) const override;
   std::string ToString() const override;
 
  private:

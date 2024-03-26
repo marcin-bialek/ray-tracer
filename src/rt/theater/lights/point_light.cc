@@ -35,7 +35,9 @@ Vector3<> PointLight::Illuminate(const Ray& ray,
   auto R = 2 * LN * intersection.normal - L;
   auto d = std::max(0.0, phong.kd * LN);
   auto s = phong.ks * std::pow(std::max(0.0, R.Dot(V)), phong.exp);
-  return (d * color_.Hadamard(intersection.material->GetColor()) + s * color_)
+  return (d * color_.Hadamard(intersection.material->GetColor(intersection.u,
+                                                              intersection.v)) +
+          s * color_)
       .Clamp(0.0, 1.0);
 }
 

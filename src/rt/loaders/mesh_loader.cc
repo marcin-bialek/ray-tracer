@@ -4,6 +4,7 @@
 
 #include "common.hh"
 #include "material_solid_loader.hh"
+#include "material_textured_loader.hh"
 #include "obj_loader.hh"
 
 namespace rt {
@@ -39,7 +40,8 @@ void MeshLoader::LoadMaterial() {
     MaterialSolidLoader loader{elm};
     mesh_->SetMaterial(loader.Load());
   } else if ((elm = element_->FirstChildElement("material_textured"))) {
-    throw RuntimeError{"material textured is not supported"};
+    MaterialTexturedLoader loader{elm, directory_};
+    mesh_->SetMaterial(loader.Load());
   } else {
     throw RuntimeError{"material is not set"};
   }

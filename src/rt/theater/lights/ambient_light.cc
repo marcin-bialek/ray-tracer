@@ -20,7 +20,8 @@ std::optional<Ray> AmbientLight::GetShadowRay(const Vector3<>& origin) const {
 Vector3<> AmbientLight::Illuminate(const Ray& ray,
                                    const Intersection& intersection) const {
   return (intersection.material->phong().ka *
-          color_.Hadamard(intersection.material->GetColor()))
+          color_.Hadamard(
+              intersection.material->GetColor(intersection.u, intersection.v)))
       .Clamp(0.0, 1.0);
 }
 

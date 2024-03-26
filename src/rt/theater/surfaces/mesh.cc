@@ -50,6 +50,12 @@ std::optional<Intersection> Mesh::Hit(const Ray& ray) const {
     if (!inter.front) {
       inter.normal = -inter.normal;
     }
+    inter.u = (1 - u - v) * triangle.texture_coords[0].x +
+              u * triangle.texture_coords[1].x +
+              v * triangle.texture_coords[2].x;
+    inter.v = (1 - u - v) * triangle.texture_coords[0].y +
+              u * triangle.texture_coords[1].y +
+              v * triangle.texture_coords[2].y;
     return inter;
   }
   return std::nullopt;

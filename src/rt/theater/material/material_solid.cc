@@ -13,7 +13,7 @@ MaterialSolid& MaterialSolid::SetColor(const Vector3<>& value) noexcept {
   return *this;
 }
 
-Vector3<> MaterialSolid::GetColor() const {
+Vector3<> MaterialSolid::GetColor(double u, double v) const {
   return color_;
 }
 

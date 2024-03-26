@@ -43,6 +43,9 @@ std::optional<Intersection> Sphere::Hit(const Ray& ray) const {
   if (!inter.front) {
     inter.normal = -inter.normal;
   }
+  auto w = inter.point - position_;
+  inter.u = 0.5 + std::atan2(w.x, w.z) / (2 * M_PI);
+  inter.v = 0.5 - std::asin(w.y) / M_PI;
   return inter;
 }
 

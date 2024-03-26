@@ -73,7 +73,7 @@ void SceneLoader::LoadSurfaces(tinyxml2::XMLElement* element) {
   while (elm) {
     auto name = std::string_view{elm->Name()};
     if (name == "sphere") {
-      SphereLoader loader{elm};
+      SphereLoader loader{elm, directory_};
       scene_->AddSurface(loader.Load());
     } else if (name == "mesh") {
       MeshLoader loader{elm, directory_};

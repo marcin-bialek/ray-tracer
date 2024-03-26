@@ -4,11 +4,13 @@
 
 #include "common.hh"
 #include "material_solid_loader.hh"
+#include "material_textured_loader.hh"
 
 namespace rt {
 
-SphereLoader::SphereLoader(tinyxml2::XMLElement* element) noexcept
-    : element_{element} {}
+SphereLoader::SphereLoader(tinyxml2::XMLElement* element,
+                           const std::filesystem::path& directory) noexcept
+    : element_{element}, directory_{directory} {}
 
 std::unique_ptr<Sphere> SphereLoader::Load() {
   sphere_ = std::make_unique<Sphere>();
@@ -41,7 +43,8 @@ void SphereLoader::LoadMaterial() {
     MaterialSolidLoader loader{elm};
     sphere_->SetMaterial(loader.Load());
   } else if ((elm = element_->FirstChildElement("material_textured"))) {
-    throw RuntimeError{"material textured is not supported"};
+    MaterialTexturedLoader loader{elm, directory_};
+    sphere_->SetMaterial(loader.Load());
   } else {
     throw RuntimeError{"material is not set"};
   }
