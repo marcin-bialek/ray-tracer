@@ -7,6 +7,8 @@
 
 namespace rt {
 
+static constexpr auto kEpsilon = 0.0001;
+
 std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
   scene_ = &scene;
   auto camera = scene.camera();
@@ -30,13 +32,12 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
 }
 
 std::optional<Intersection> Renderer::Hit(const Ray& ray) {
-  static constexpr auto epsilon = 0.0001;
   bool hit = false;
   Intersection inter{};
   inter.distance = std::numeric_limits<double>::infinity();
   for (auto& s : scene_->surfaces()) {
     auto i = s->Hit(ray);
-    if (i.has_value() && epsilon < i->distance &&
+    if (i.has_value() && kEpsilon < i->distance &&
         i->distance < inter.distance) {
       hit = true;
       inter = *i;
@@ -49,9 +50,6 @@ std::optional<Intersection> Renderer::Hit(const Ray& ray) {
 }
 
 Vector3<> Renderer::ProcessRay(const Ray& ray, std::size_t bounces) {
-  if (bounces == 0) {
-    return scene_->background();
-  }
   auto inter = Hit(ray);
   if (!inter.has_value()) {
     return scene_->background();
@@ -67,7 +65,22 @@ Vector3<> Renderer::ProcessRay(const Ray& ray, std::size_t bounces) {
     }
     color += light->Illuminate(ray, *inter);
   }
-  return color.Clamp(0.0, 1.0);
+  color = color.Clamp(0.0, 1.0);
+  if (bounces == 0) {
+    return color;
+  }
+  auto reflectance = inter->material->reflectance();
+  Vector3<> reflected_color{};
+  if (kEpsilon < reflectance) {
+    auto R =
+        2 * (-ray.direction).Dot(inter->normal) * inter->normal + ray.direction;
+    auto reflected_ray = Ray{inter->point, R};
+    reflected_color =
+        (reflectance * ProcessRay(reflected_ray, bounces - 1)).Clamp(0.0, 1.0);
+  } else {
+    reflectance = 0.0;
+  }
+  return color * (1 - reflectance) + reflected_color;
 }
 
 }  // namespace rt
