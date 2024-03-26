@@ -37,7 +37,8 @@ Vector3<> ParallelLight::Illuminate(const Ray& ray,
   auto R = 2 * LN * intersection.normal - L;
   auto d = std::max(0.0, phong.kd * LN);
   auto s = phong.ks * std::pow(std::max(0.0, R.Dot(V)), phong.exp);
-  return ((d + s) * color_).Clamp(0.0, 1.0);
+  return (d * color_.Hadamard(intersection.material->GetColor()) + s * color_)
+      .Clamp(0.0, 1.0);
 }
 
 std::string ParallelLight::ToString() const {

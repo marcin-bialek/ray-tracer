@@ -30,12 +30,14 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
 }
 
 std::optional<Intersection> Renderer::Hit(const Ray& ray) {
+  static constexpr auto epsilon = 0.0001;
   bool hit = false;
   Intersection inter{};
   inter.distance = std::numeric_limits<double>::infinity();
   for (auto& s : scene_->surfaces()) {
     auto i = s->Hit(ray);
-    if (i.has_value() && 0.001 < i->distance && i->distance < inter.distance) {
+    if (i.has_value() && epsilon < i->distance &&
+        i->distance < inter.distance) {
       hit = true;
       inter = *i;
     }
@@ -65,7 +67,7 @@ Vector3<> Renderer::ProcessRay(const Ray& ray, std::size_t bounces) {
     }
     color += light->Illuminate(ray, *inter);
   }
-  return color.Hadamard(inter->material->GetColor());
+  return color.Clamp(0.0, 1.0);
 }
 
 }  // namespace rt
