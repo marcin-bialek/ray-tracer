@@ -45,6 +45,10 @@ SpotLight& SpotLight::SetFallof(const Angle<>& a1, const Angle<>& a2) noexcept {
   return *this;
 }
 
+double SpotLight::GetDistance(const Vector3<>& origin) const {
+  throw RuntimeError{"not implemented"};
+}
+
 std::optional<Ray> SpotLight::GetShadowRay(const Vector3<>& origin) const {
   throw RuntimeError{"not implemented"};
 }

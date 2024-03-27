@@ -24,6 +24,10 @@ ParallelLight& ParallelLight::SetDirection(const Vector3<>& value) noexcept {
   return *this;
 }
 
+double ParallelLight::GetDistance(const Vector3<>& origin) const {
+  return std::numeric_limits<double>::infinity();
+}
+
 std::optional<Ray> ParallelLight::GetShadowRay(const Vector3<>& origin) const {
   return Ray{origin, -direction_};
 }

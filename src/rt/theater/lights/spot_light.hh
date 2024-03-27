@@ -22,6 +22,7 @@ class SpotLight final : public Light {
   SpotLight& SetDirection(const Vector3<>& value) noexcept;
   SpotLight& SetFallof(const Angle<>& a1, const Angle<>& a2) noexcept;
 
+  double GetDistance(const Vector3<>& origin) const override;
   std::optional<Ray> GetShadowRay(const Vector3<>& origin) const override;
   Vector3<> Illuminate(const Ray& ray,
                        const Intersection& intersection) const override;

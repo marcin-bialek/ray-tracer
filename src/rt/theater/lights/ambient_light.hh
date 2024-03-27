@@ -14,6 +14,7 @@ class AmbientLight final : public Light {
 
   AmbientLight& SetColor(const Vector3<>& value) noexcept;
 
+  double GetDistance(const Vector3<>& origin) const override;
   std::optional<Ray> GetShadowRay(const Vector3<>& origin) const override;
   Vector3<> Illuminate(const Ray& ray,
                        const Intersection& intersection) const override;

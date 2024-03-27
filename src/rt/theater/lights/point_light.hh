@@ -16,6 +16,7 @@ class PointLight final : public Light {
   PointLight& SetColor(const Vector3<>& value) noexcept;
   PointLight& SetPosition(const Vector3<>& value) noexcept;
 
+  double GetDistance(const Vector3<>& origin) const override;
   std::optional<Ray> GetShadowRay(const Vector3<>& origin) const override;
   Vector3<> Illuminate(const Ray& ray,
                        const Intersection& intersection) const override;

@@ -20,7 +20,8 @@ class Renderer {
   const Scene* scene_;
   std::unique_ptr<Image> image_;
 
-  std::optional<Intersection> Hit(const Ray& ray);
+  std::optional<Intersection> Hit(
+      const Ray& ray, double max = std::numeric_limits<double>::infinity());
   Vector3<> ProcessRay(const Ray& ray, std::size_t bounces);
 };
 

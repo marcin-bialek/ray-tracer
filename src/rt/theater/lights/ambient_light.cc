@@ -13,6 +13,10 @@ AmbientLight& AmbientLight::SetColor(const Vector3<>& value) noexcept {
   return *this;
 }
 
+double AmbientLight::GetDistance(const Vector3<>& origin) const {
+  return std::numeric_limits<double>::infinity();
+}
+
 std::optional<Ray> AmbientLight::GetShadowRay(const Vector3<>& origin) const {
   return std::nullopt;
 }

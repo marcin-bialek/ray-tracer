@@ -22,6 +22,10 @@ PointLight& PointLight::SetPosition(const Vector3<>& value) noexcept {
   return *this;
 }
 
+double PointLight::GetDistance(const Vector3<>& origin) const {
+  return (position_ - origin).Length();
+}
+
 std::optional<Ray> PointLight::GetShadowRay(const Vector3<>& origin) const {
   return Ray{origin, (position_ - origin).Unit()};
 }

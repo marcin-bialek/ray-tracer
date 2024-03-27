@@ -18,6 +18,8 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
   auto pixel_origin = viewport.origin + (du + dv) / 2;
   image_ = std::make_unique<Image>(camera->width(), camera->height());
 
+  std::size_t progress = 0;
+  auto total = camera->width() * camera->height();
   for (std::size_t y = 0; y < camera->height(); ++y) {
     auto row = pixel_origin + dv * y;
     for (std::size_t x = 0; x < camera->width(); ++x) {
@@ -25,19 +27,22 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
       auto direction = (pixel - camera->position()).Unit();
       (*image_)[{x, y}] =
           ProcessRay({camera->position(), direction}, camera->max_bounces());
+      std::cout << std::format("Scanlines {}/{} ({} %)\r", y + 1,
+                               camera->height(), 100 * (++progress) / total);
+      std::cout.flush();
     }
   }
-
+  std::cout << std::endl;
   return std::move(image_);
 }
 
-std::optional<Intersection> Renderer::Hit(const Ray& ray) {
+std::optional<Intersection> Renderer::Hit(const Ray& ray, double max) {
   bool hit = false;
   Intersection inter{};
   inter.distance = std::numeric_limits<double>::infinity();
   for (auto& s : scene_->surfaces()) {
     auto i = s->Hit(ray);
-    if (i.has_value() && kEpsilon < i->distance &&
+    if (i.has_value() && kEpsilon < i->distance && i->distance < max &&
         i->distance < inter.distance) {
       hit = true;
       inter = *i;
@@ -58,7 +63,8 @@ Vector3<> Renderer::ProcessRay(const Ray& ray, std::size_t bounces) {
   for (auto& light : scene_->lights()) {
     auto shadow_ray = light->GetShadowRay(inter->point);
     if (shadow_ray.has_value()) {
-      auto shadow_inter = Hit(*shadow_ray);
+      auto distance = light->GetDistance(shadow_ray->origin);
+      auto shadow_inter = Hit(*shadow_ray, distance);
       if (shadow_inter.has_value()) {
         continue;
       }
