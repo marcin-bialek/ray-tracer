@@ -27,9 +27,9 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
       auto direction = (pixel - camera->position()).Unit();
       (*image_)[{x, y}] =
           ProcessRay({camera->position(), direction}, camera->max_bounces());
-      std::cout << std::format("Scanlines {}/{} ({} %)\r", y + 1,
-                               camera->height(), 100 * (++progress) / total);
-      std::cout.flush();
+      std::cout << std::format("\rScanlines {}/{} ({} %)", y + 1,
+                               camera->height(), 100 * (++progress) / total)
+                << std::flush;
     }
   }
   std::cout << std::endl;

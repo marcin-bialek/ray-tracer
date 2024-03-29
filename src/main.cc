@@ -7,6 +7,26 @@
 #include <rt/renderer/renderer.hh>
 #include <rt/writers/image_writer.hh>
 
+static void ApplyCommandLineArgs(argparse::ArgumentParser& parser,
+                                 rt::Scene& scene) {
+  auto resolution = parser.present<std::vector<std::size_t>>("-r");
+  if (resolution.has_value()) {
+    scene.camera()->SetResolution(resolution->at(0), resolution->at(1));
+  }
+  auto background = parser.present<std::vector<double>>("-b");
+  if (background.has_value()) {
+    scene.SetBackground({
+        std::clamp(background->at(0), 0.0, 1.0),
+        std::clamp(background->at(1), 0.0, 1.0),
+        std::clamp(background->at(2), 0.0, 1.0),
+    });
+  }
+  auto max_bounces = parser.present<std::size_t>("max-bounces");
+  if (max_bounces.has_value()) {
+    scene.camera()->SetMaxBounces(*max_bounces);
+  }
+}
+
 int main(int argc, char* argv[]) {
   argparse::ArgumentParser parser{"ray-tracer"};
   parser.add_argument("input_file").required().help("XML input file");
@@ -43,33 +63,18 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
+  std::cout << "Loading " << input_file_path << std::endl;
   rt::SceneLoader loader{
       input_file.FirstChildElement(),
       std::filesystem::path{input_file_path}.remove_filename()};
   auto scene = loader.Load();
-
-  auto resolution = parser.present<std::vector<std::size_t>>("-r");
-  if (resolution.has_value()) {
-    scene->camera()->SetResolution(resolution->at(0), resolution->at(1));
-  }
-  auto background = parser.present<std::vector<double>>("-b");
-  if (background.has_value()) {
-    scene->SetBackground({
-        std::clamp(background->at(0), 0.0, 1.0),
-        std::clamp(background->at(1), 0.0, 1.0),
-        std::clamp(background->at(2), 0.0, 1.0),
-    });
-  }
-  auto max_bounces = parser.present<std::size_t>("max-bounces");
-  if (max_bounces.has_value()) {
-    scene->camera()->SetMaxBounces(*max_bounces);
-  }
-
   std::cout << scene->ToString() << std::endl;
 
+  std::cout << "Rendering" << std::endl;
   rt::Renderer renderer{};
   auto image = renderer.Render(*scene);
 
+  std::cout << "Saving" << std::endl;
   rt::ImagerWriter::Config iw_config{};
   iw_config.path = "image.png";
   iw_config.gamma_correction = parser.get<bool>("-g");
