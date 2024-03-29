@@ -11,20 +11,22 @@ namespace rt {
 
 class SceneLoader {
  public:
-  explicit SceneLoader(tinyxml2::XMLDocument* document,
+  using ScenePtr = std::unique_ptr<Scene>;
+
+  explicit SceneLoader(tinyxml2::XMLElement* element,
                        const std::filesystem::path& directory) noexcept;
 
-  std::unique_ptr<Scene> Load();
+  ScenePtr Load();
 
  private:
-  tinyxml2::XMLDocument* document_;
+  tinyxml2::XMLElement* element_;
   std::filesystem::path directory_;
-  std::unique_ptr<Scene> scene_;
+  ScenePtr scene_;
 
-  void LoadBackground(tinyxml2::XMLElement* element);
-  void LoadCamera(tinyxml2::XMLElement* element);
-  void LoadLights(tinyxml2::XMLElement* element);
-  void LoadSurfaces(tinyxml2::XMLElement* element);
+  void LoadProperties();
+  void LoadCamera();
+  void LoadLights();
+  void LoadSurfaces();
 };
 
 }  // namespace rt
