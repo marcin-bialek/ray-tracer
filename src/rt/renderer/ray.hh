@@ -15,6 +15,10 @@ struct Ray {
   constexpr Vector3<> At(double t) const noexcept {
     return origin + t * direction;
   }
+
+  constexpr Ray Move(double t) const noexcept {
+    return {At(t), direction};
+  }
 };
 
 }  // namespace rt

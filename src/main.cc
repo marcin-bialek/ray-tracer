@@ -13,11 +13,14 @@ int main(int argc, char* argv[]) {
   parser.add_argument("-r", "--resolution")
       .nargs(2)
       .scan<'u', std::size_t>()
-      .help("custom resolution");
+      .help("custom resolution (width, height)");
   parser.add_argument("-b", "--background")
       .nargs(3)
       .scan<'g', double>()
-      .help("custom background");
+      .help("custom background (red, green, blue)");
+  parser.add_argument("-m", "--max-bounces")
+      .scan<'u', std::size_t>()
+      .help("custom max bounces");
   parser.add_argument("-g", "--gamma")
       .default_value(false)
       .implicit_value(true)
@@ -55,6 +58,10 @@ int main(int argc, char* argv[]) {
         std::clamp(background->at(1), 0.0, 1.0),
         std::clamp(background->at(2), 0.0, 1.0),
     });
+  }
+  auto max_bounces = parser.present<std::size_t>("max-bounces");
+  if (max_bounces.has_value()) {
+    scene->camera()->SetMaxBounces(*max_bounces);
   }
 
   std::cout << scene->ToString() << std::endl;
