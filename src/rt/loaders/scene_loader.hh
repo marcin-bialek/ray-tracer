@@ -5,7 +5,7 @@
 
 #include <tinyxml2/tinyxml2.hh>
 
-#include <rt/theater/scene.hh>
+#include <rt/scene/scene.hh>
 
 namespace rt {
 

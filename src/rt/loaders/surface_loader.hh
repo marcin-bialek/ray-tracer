@@ -7,7 +7,7 @@
 
 #include <tinyxml2/tinyxml2.hh>
 
-#include <rt/theater/surfaces/surface.hh>
+#include <rt/surfaces/surface.hh>
 
 namespace rt {
 

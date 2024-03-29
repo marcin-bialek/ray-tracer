@@ -5,9 +5,10 @@
 #include <string>
 #include <vector>
 
+#include <rt/lights/light.hh>
+#include <rt/surfaces/surface.hh>
+
 #include "camera.hh"
-#include "lights/light.hh"
-#include "surfaces/surface.hh"
 
 namespace rt {
 

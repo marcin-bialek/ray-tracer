@@ -3,9 +3,9 @@
 #include <optional>
 #include <string>
 
+#include <rt/material/material.hh>
 #include <rt/renderer/intersection.hh>
 #include <rt/renderer/ray.hh>
-#include <rt/theater/material/material.hh>
 
 namespace rt {
 

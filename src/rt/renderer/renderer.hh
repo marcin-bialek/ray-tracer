@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <rt/common/image.hh>
-#include <rt/theater/scene.hh>
+#include <rt/scene/scene.hh>
 
 #include "intersection.hh"
 #include "ray.hh"

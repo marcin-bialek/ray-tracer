@@ -2,8 +2,8 @@
 
 #include <rt/common/exception.hh>
 #include <rt/common/xml.hh>
-#include <rt/theater/surfaces/mesh.hh>
-#include <rt/theater/surfaces/sphere.hh>
+#include <rt/surfaces/mesh.hh>
+#include <rt/surfaces/sphere.hh>
 
 #include "material_loader.hh"
 #include "obj_loader.hh"

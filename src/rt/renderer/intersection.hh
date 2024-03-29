@@ -1,7 +1,7 @@
 #pragma once
 
+#include <rt/material/material.hh>
 #include <rt/math/vector3.hh>
-#include <rt/theater/material/material.hh>
 
 namespace rt {
 

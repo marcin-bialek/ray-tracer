@@ -6,7 +6,7 @@
 
 #include <tinyxml2/tinyxml2.hh>
 
-#include <rt/theater/lights/light.hh>
+#include <rt/lights/light.hh>
 
 namespace rt {
 

@@ -2,10 +2,10 @@
 
 #include <rt/common/exception.hh>
 #include <rt/common/xml.hh>
-#include <rt/theater/lights/ambient_light.hh>
-#include <rt/theater/lights/parallel_light.hh>
-#include <rt/theater/lights/point_light.hh>
-#include <rt/theater/lights/spot_light.hh>
+#include <rt/lights/ambient_light.hh>
+#include <rt/lights/parallel_light.hh>
+#include <rt/lights/point_light.hh>
+#include <rt/lights/spot_light.hh>
 
 namespace rt {
 

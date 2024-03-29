@@ -2,8 +2,8 @@
 
 #include <rt/common/exception.hh>
 #include <rt/common/xml.hh>
-#include <rt/theater/material/material_solid.hh>
-#include <rt/theater/material/material_textured.hh>
+#include <rt/material/material_solid.hh>
+#include <rt/material/material_textured.hh>
 
 #include "image_loader.hh"
 

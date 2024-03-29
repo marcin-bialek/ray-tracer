@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include <rt/theater/lights/ambient_light.hh>
-#include <rt/theater/lights/parallel_light.hh>
+#include <rt/lights/ambient_light.hh>
+#include <rt/lights/parallel_light.hh>
 
 namespace rt {
 

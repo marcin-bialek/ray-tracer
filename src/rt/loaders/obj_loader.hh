@@ -5,7 +5,7 @@
 #include <string>
 
 #include <rt/math/vector3.hh>
-#include <rt/theater/surfaces/triangle.hh>
+#include <rt/surfaces/triangle.hh>
 
 namespace rt {
 

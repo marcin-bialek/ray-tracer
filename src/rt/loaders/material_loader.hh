@@ -7,7 +7,7 @@
 
 #include <tinyxml2/tinyxml2.hh>
 
-#include <rt/theater/material/material.hh>
+#include <rt/material/material.hh>
 
 namespace rt {
 
