@@ -11,4 +11,10 @@ Surface& Surface::SetMaterial(std::unique_ptr<Material> material) noexcept {
   return *this;
 }
 
+Surface& Surface::AddTransformation(
+    std::unique_ptr<Transformation> transformation) noexcept {
+  transformations_.push_back(std::move(transformation));
+  return *this;
+}
+
 }  // namespace rt

@@ -68,6 +68,7 @@ int main(int argc, char* argv[]) {
       input_file.FirstChildElement(),
       std::filesystem::path{input_file_path}.remove_filename()};
   auto scene = loader.Load();
+  ApplyCommandLineArgs(parser, *scene);
   std::cout << scene->ToString() << std::endl;
 
   std::cout << "Rendering" << std::endl;

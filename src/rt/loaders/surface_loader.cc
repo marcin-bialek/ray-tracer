@@ -7,6 +7,7 @@
 
 #include "material_loader.hh"
 #include "obj_loader.hh"
+#include "transformation_loader.hh"
 
 namespace rt {
 
@@ -20,13 +21,7 @@ SurfaceLoader::SurfacePtr SurfaceLoader::Load() {
     throw RuntimeError{"unsupported surface {}", element_->Name()};
   }
   auto surface = (this->*(i->second))();
-  auto element_material = GetFirstChildIf(
-      element_, [](auto e) { return MaterialLoader::IsMaterial(e); });
-  if (!element_material) {
-    throw RuntimeError{"no material"};
-  }
-  MaterialLoader material_loader{element_material, directory_};
-  surface->SetMaterial(material_loader.Load());
+  LoadMaterial(surface.get());
   return std::move(surface);
 }
 
@@ -56,6 +51,26 @@ SurfaceLoader::SurfacePtr SurfaceLoader::LoadMesh() {
     throw RuntimeError{"error loading mesh, {}", err.what()};
   }
   return std::move(surface);
+}
+
+void SurfaceLoader::LoadMaterial(Surface* surface) {
+  auto elm_material = GetFirstChildIf(
+      element_, [](auto e) { return MaterialLoader::IsMaterial(e); });
+  if (!elm_material) {
+    throw RuntimeError{"no material"};
+  }
+  MaterialLoader material_loader{elm_material, directory_};
+  surface->SetMaterial(material_loader.Load());
+}
+
+void SurfaceLoader::LoadTransformation(Surface* surface) {
+  auto elm_transform = element_->FirstChildElement("transform");
+  if (elm_transform) {
+    ForeachChild(elm_transform, [&](auto elm) {
+      TransformationLoader loader{elm};
+      surface->AddTransformation(loader.Load());
+    });
+  }
 }
 
 const std::map<std::string, SurfaceLoader::LoaderPtr> SurfaceLoader::loaders_{
