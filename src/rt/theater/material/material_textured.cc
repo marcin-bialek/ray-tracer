@@ -13,8 +13,10 @@ MaterialTextured& MaterialTextured::SetImage(
 }
 
 Vector3<> MaterialTextured::GetColor(double u, double v) const {
-  u = std::clamp(u, 0.0, 1.0);
-  v = std::clamp(v, 0.0, 1.0);
+  double a = 0.0;
+  double b = 0.0;
+  u = std::modf(u, &a);
+  v = std::modf(v, &b);
   auto x = static_cast<std::size_t>(u * image_->width());
   auto y = static_cast<std::size_t>(v * image_->height());
   return (*image_)[{x, y}];
