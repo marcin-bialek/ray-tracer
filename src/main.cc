@@ -3,6 +3,7 @@
 #include <argparse/argparse.hh>
 #include <tinyxml2/tinyxml2.hh>
 
+#include <rt/common/exception.hh>
 #include <rt/loaders/scene_loader.hh>
 #include <rt/renderer/renderer.hh>
 #include <rt/writers/image_writer.hh>
@@ -45,6 +46,9 @@ int main(int argc, char* argv[]) {
       .default_value(false)
       .implicit_value(true)
       .help("use gamma correction");
+  parser.add_argument("-o", "--output")
+      .default_value("image.png")
+      .help("output file");
 
   try {
     parser.parse_args(argc, argv);
@@ -54,31 +58,36 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  tinyxml2::XMLDocument input_file{};
-  const auto input_file_path = parser.get("input_file");
-  const auto err = input_file.LoadFile(input_file_path.c_str());
-  if (err != tinyxml2::XML_SUCCESS) {
-    std::cerr << "Could not load input file: " << input_file.ErrorIDToName(err)
-              << std::endl;
+  try {
+    tinyxml2::XMLDocument input_file{};
+    const auto input_file_path = parser.get("input_file");
+    input_file.LoadFile(input_file_path.c_str());
+    if (input_file.Error()) {
+      throw rt::RuntimeError{"Could not load {}, {}", input_file_path,
+                             input_file.ErrorStr()};
+    }
+
+    std::cout << "Loading " << input_file_path << std::endl;
+    auto root = input_file.RootElement();
+    auto directory = std::filesystem::path{input_file_path}.remove_filename();
+    rt::SceneLoader loader{root, directory};
+    auto scene = loader.Load();
+    ApplyCommandLineArgs(parser, *scene);
+    std::cout << scene->ToString() << std::endl;
+
+    std::cout << "Rendering" << std::endl;
+    rt::Renderer renderer{};
+    auto image = renderer.Render(*scene);
+
+    auto output_file = parser.get<std::string>("output");
+    std::cout << "Saving " << output_file << std::endl;
+    rt::ImagerWriter::Config iw_config{};
+    iw_config.path = output_file;
+    iw_config.gamma_correction = parser.get<bool>("-g");
+    rt::ImagerWriter writer{iw_config};
+    writer.Write(*image);
+  } catch (const std::exception& err) {
+    std::cerr << err.what() << std::endl;
     return EXIT_FAILURE;
   }
-
-  std::cout << "Loading " << input_file_path << std::endl;
-  rt::SceneLoader loader{
-      input_file.FirstChildElement(),
-      std::filesystem::path{input_file_path}.remove_filename()};
-  auto scene = loader.Load();
-  ApplyCommandLineArgs(parser, *scene);
-  std::cout << scene->ToString() << std::endl;
-
-  std::cout << "Rendering" << std::endl;
-  rt::Renderer renderer{};
-  auto image = renderer.Render(*scene);
-
-  std::cout << "Saving" << std::endl;
-  rt::ImagerWriter::Config iw_config{};
-  iw_config.path = "image.png";
-  iw_config.gamma_correction = parser.get<bool>("-g");
-  rt::ImagerWriter writer{iw_config};
-  writer.Write(*image);
 }

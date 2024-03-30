@@ -15,9 +15,9 @@ namespace rt {
 
 namespace details {
 
-inline void ThrowIfError(tinyxml2::XMLError error) {
-  if (error != tinyxml2::XML_SUCCESS) {
-    throw RuntimeError{"{}", tinyxml2::XMLDocument::ErrorIDToName(error)};
+inline void ThrowIfError(tinyxml2::XMLElement* element) {
+  if (element->GetDocument()->Error()) {
+    throw RuntimeError{"{}", element->GetDocument()->ErrorStr()};
   }
 }
 
@@ -28,8 +28,8 @@ template <>
 struct AttrGetter<std::string> {
   static std::string Get(tinyxml2::XMLElement* element, std::string_view name) {
     const char* value{};
-    auto err = element->QueryStringAttribute(name.data(), &value);
-    ThrowIfError(err);
+    element->QueryStringAttribute(name.data(), &value);
+    ThrowIfError(element);
     return value;
   }
 };
@@ -38,8 +38,8 @@ template <>
 struct AttrGetter<bool> {
   static bool Get(tinyxml2::XMLElement* element, std::string_view name) {
     bool value{};
-    auto err = element->QueryBoolAttribute(name.data(), &value);
-    ThrowIfError(err);
+    element->QueryBoolAttribute(name.data(), &value);
+    ThrowIfError(element);
     return value;
   }
 };
@@ -48,8 +48,8 @@ template <std::unsigned_integral Tp>
 struct AttrGetter<Tp> {
   static Tp Get(tinyxml2::XMLElement* element, std::string_view name) {
     uint64_t value{};
-    auto err = element->QueryUnsigned64Attribute(name.data(), &value);
-    ThrowIfError(err);
+    element->QueryUnsigned64Attribute(name.data(), &value);
+    ThrowIfError(element);
     if (std::numeric_limits<Tp>::max() < value) {
       throw RuntimeError{"value {} does not fit specified type", value};
     }
@@ -61,8 +61,8 @@ template <std::signed_integral Tp>
 struct AttrGetter<Tp> {
   static Tp Get(tinyxml2::XMLElement* element, std::string_view name) {
     int64_t value{};
-    auto err = element->QueryInt64Attribute(name.data(), &value);
-    ThrowIfError(err);
+    element->QueryInt64Attribute(name.data(), &value);
+    ThrowIfError(element);
     if (value < std::numeric_limits<Tp>::min() ||
         std::numeric_limits<Tp>::max() < value) {
       throw RuntimeError{"value {} does not fit specified type", value};
@@ -75,8 +75,8 @@ template <std::floating_point Tp>
 struct AttrGetter<Tp> {
   static Tp Get(tinyxml2::XMLElement* element, std::string_view name) {
     double value{};
-    auto err = element->QueryDoubleAttribute(name.data(), &value);
-    ThrowIfError(err);
+    element->QueryDoubleAttribute(name.data(), &value);
+    ThrowIfError(element);
     return static_cast<Tp>(value);
   }
 };
