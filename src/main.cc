@@ -75,7 +75,6 @@ int main(int argc, char* argv[]) {
     ApplyCommandLineArgs(parser, *scene);
     std::cout << scene->ToString() << std::endl;
 
-    std::cout << "Rendering" << std::endl;
     rt::Renderer renderer{};
     auto image = renderer.Render(*scene);
 

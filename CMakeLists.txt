@@ -8,8 +8,8 @@ find_package(ZLIB)
 
 file(GLOB_RECURSE SRCS
   ${CMAKE_SOURCE_DIR}/src/*.cc
-  ${CMAKE_SOURCE_DIR}/external/tinyxml2/tinyxml2.cc
-  ${CMAKE_SOURCE_DIR}/external/spng/spng.c
+  ${CMAKE_SOURCE_DIR}/external/*.c
+  ${CMAKE_SOURCE_DIR}/external/*.cc
 )
 
 add_executable(${PROJECT_NAME} ${SRCS})

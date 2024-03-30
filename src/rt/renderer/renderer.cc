@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <indicators/indicators.hh>
+
 #include <rt/lights/ambient_light.hh>
 #include <rt/lights/parallel_light.hh>
 
@@ -18,8 +20,13 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
   auto pixel_origin = viewport.origin + (du + dv) / 2;
   image_ = std::make_unique<Image>(camera->width(), camera->height());
 
-  std::size_t progress = 0;
-  auto total = camera->width() * camera->height();
+  indicators::show_console_cursor(false);
+  indicators::ProgressBar bar{indicators::option::BarWidth{50},
+                              indicators::option::MaxProgress{camera->height()},
+                              indicators::option::PrefixText{"Rendering "},
+                              indicators::option::ShowPercentage{true},
+                              indicators::option::ShowElapsedTime{true},
+                              indicators::option::ShowRemainingTime{true}};
   for (std::size_t y = 0; y < camera->height(); ++y) {
     auto row = pixel_origin + dv * y;
     for (std::size_t x = 0; x < camera->width(); ++x) {
@@ -27,12 +34,10 @@ std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
       auto direction = (pixel - camera->position()).Unit();
       (*image_)[{x, y}] =
           ProcessRay({camera->position(), direction}, camera->max_bounces());
-      std::cout << std::format("\rScanlines {}/{} ({} %)", y + 1,
-                               camera->height(), 100 * (++progress) / total)
-                << std::flush;
     }
+    bar.tick();
   }
-  std::cout << std::endl;
+  indicators::show_console_cursor(true);
   return std::move(image_);
 }
 
