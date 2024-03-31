@@ -49,6 +49,10 @@ struct Vector3 {
     return {x / l, y / l, z / l};
   }
 
+  constexpr Vector3<Tp> Inverse() const noexcept {
+    return {1.0 / x, 1.0 / y, 1.0 / z};
+  }
+
   constexpr Vector3<Tp> Min(Tp min) const noexcept {
     return {std::min(x, min), std::min(y, min), std::min(z, min)};
   }

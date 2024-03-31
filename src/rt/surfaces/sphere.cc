@@ -55,10 +55,6 @@ std::optional<Intersection> Sphere::DoHit(const Ray& ray) const {
   inter.material = material_.get();
   inter.point = ray.At(inter.distance);
   inter.normal = (inter.point - position_).Unit();
-  inter.front = ray.direction.Dot(inter.normal) < 0.0;
-  if (!inter.front) {
-    inter.normal = -inter.normal;
-  }
   auto w = inter.point - position_;
   inter.u = 0.5 + std::atan2(w.x, w.z) / (2 * M_PI);
   inter.v = 0.5 - std::asin(w.y) / M_PI;

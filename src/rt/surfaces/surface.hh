@@ -25,6 +25,8 @@ class Surface {
 
  protected:
   std::unique_ptr<Material> material_;
+  std::optional<Transformation> inv_transform_;
+  std::optional<Transformation> inv_t_transform_;
 
   virtual std::optional<Intersection> DoHit(const Ray& ray) const = 0;
 };

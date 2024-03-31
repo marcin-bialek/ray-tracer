@@ -66,10 +66,6 @@ std::optional<Intersection> Mesh::DoHit(const Ray& ray) const {
   inter.normal = (1 - min_u - min_v) * min_triangle->normals[0] +
                  min_u * min_triangle->normals[1] +
                  min_v * min_triangle->normals[2];
-  inter.front = ray.direction.Dot(inter.normal) < 0.0;
-  if (!inter.front) {
-    inter.normal = -inter.normal;
-  }
   inter.u = (1 - min_u - min_v) * min_triangle->texture_coords[0].x +
             min_u * min_triangle->texture_coords[1].x +
             min_v * min_triangle->texture_coords[2].x;
