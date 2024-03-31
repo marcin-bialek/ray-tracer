@@ -12,9 +12,12 @@ Surface& Surface::SetMaterial(std::unique_ptr<Material> material) noexcept {
 }
 
 Surface& Surface::AddTransformation(
-    std::unique_ptr<Transformation> transformation) noexcept {
-  transformations_.push_back(std::move(transformation));
+    const Transformation& transformation) noexcept {
   return *this;
+}
+
+std::optional<Intersection> Surface::Hit(const Ray& ray) const {
+  return DoHit(ray);
 }
 
 }  // namespace rt

@@ -18,15 +18,15 @@ class Surface {
   const Material* material() const noexcept;
 
   Surface& SetMaterial(std::unique_ptr<Material> material) noexcept;
-  Surface& AddTransformation(
-      std::unique_ptr<Transformation> transformation) noexcept;
+  Surface& AddTransformation(const Transformation& transformation) noexcept;
+  std::optional<Intersection> Hit(const Ray& ray) const;
 
-  virtual std::optional<Intersection> Hit(const Ray& ray) const = 0;
   virtual std::string ToString() const = 0;
 
  protected:
   std::unique_ptr<Material> material_;
-  std::vector<std::unique_ptr<Transformation>> transformations_;
+
+  virtual std::optional<Intersection> DoHit(const Ray& ray) const = 0;
 };
 
 }  // namespace rt

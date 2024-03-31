@@ -22,7 +22,17 @@ Sphere& Sphere::SetRadius(double value) noexcept {
   return *this;
 }
 
-std::optional<Intersection> Sphere::Hit(const Ray& ray) const {
+std::string Sphere::ToString() const {
+  std::string str = "Sphere\n";
+  str += std::format("  position = {}\n", position_.ToString());
+  str += std::format("  radius = {}\n", radius_);
+  if (material_) {
+    str += material_->ToString();
+  }
+  return str;
+}
+
+std::optional<Intersection> Sphere::DoHit(const Ray& ray) const {
   auto v = ray.origin - position_;
   auto a = ray.direction.Dot(ray.direction);
   auto b = 2.0 * v.Dot(ray.direction);
@@ -53,16 +63,6 @@ std::optional<Intersection> Sphere::Hit(const Ray& ray) const {
   inter.u = 0.5 + std::atan2(w.x, w.z) / (2 * M_PI);
   inter.v = 0.5 - std::asin(w.y) / M_PI;
   return inter;
-}
-
-std::string Sphere::ToString() const {
-  std::string str = "Sphere\n";
-  str += std::format("  position = {}\n", position_.ToString());
-  str += std::format("  radius = {}\n", radius_);
-  if (material_) {
-    str += material_->ToString();
-  }
-  return str;
 }
 
 }  // namespace rt

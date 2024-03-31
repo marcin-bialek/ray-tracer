@@ -17,8 +17,10 @@ class Mesh : public Surface {
   void SetTriangles(std::span<const Triangle> triangles) noexcept;
   void SetTriangles(std::vector<Triangle> triangles) noexcept;
 
-  std::optional<Intersection> Hit(const Ray& ray) const override;
   std::string ToString() const override;
+
+ protected:
+  std::optional<Intersection> DoHit(const Ray& ray) const override;
 
  private:
   std::vector<Triangle> triangles_;

@@ -14,8 +14,10 @@ class RotateY : public Transformation {
 
   RotateY& SetAngle(const Angle<>& value) noexcept;
 
+  std::unique_ptr<Transformation> Inverse() const override;
+
  private:
-  Angle<> angle_;
+  Angle<> angle_{};
 };
 
 }  // namespace rt

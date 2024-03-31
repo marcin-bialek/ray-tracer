@@ -22,6 +22,7 @@ SurfaceLoader::SurfacePtr SurfaceLoader::Load() {
   }
   auto surface = (this->*(i->second))();
   LoadMaterial(surface.get());
+  LoadTransformations(surface.get());
   return std::move(surface);
 }
 
@@ -63,12 +64,12 @@ void SurfaceLoader::LoadMaterial(Surface* surface) {
   surface->SetMaterial(material_loader.Load());
 }
 
-void SurfaceLoader::LoadTransformation(Surface* surface) {
+void SurfaceLoader::LoadTransformations(Surface* surface) {
   auto elm_transform = element_->FirstChildElement("transform");
   if (elm_transform) {
     ForeachChild(elm_transform, [&](auto elm) {
       TransformationLoader loader{elm};
-      surface->AddTransformation(loader.Load());
+      surface->AddTransformation(*loader.Load());
     });
   }
 }

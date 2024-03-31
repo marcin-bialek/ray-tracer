@@ -14,8 +14,10 @@ class Translate : public Transformation {
 
   Translate& SetVector(const Vector3<>& value) noexcept;
 
+  std::unique_ptr<Transformation> Inverse() const override;
+
  private:
-  Vector3<> vector_;
+  Vector3<> vector_{};
 };
 
 }  // namespace rt

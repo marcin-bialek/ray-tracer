@@ -29,7 +29,7 @@ class SurfaceLoader {
   SurfacePtr LoadSphere();
   SurfacePtr LoadMesh();
   void LoadMaterial(Surface* surface);
-  void LoadTransformation(Surface* surface);
+  void LoadTransformations(Surface* surface);
 
   using LoaderPtr = SurfacePtr (SurfaceLoader::*)();
   static const std::map<std::string, LoaderPtr> loaders_;

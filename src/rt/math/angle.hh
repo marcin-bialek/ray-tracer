@@ -43,4 +43,9 @@ class Angle {
   Tp radians_;
 };
 
+template <Numeric Tp = double>
+constexpr Angle<Tp> operator-(const Angle<Tp>& angle) noexcept {
+  return -angle.degrees();
+}
+
 }  // namespace rt

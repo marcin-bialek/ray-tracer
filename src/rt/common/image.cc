@@ -34,12 +34,13 @@ std::vector<double> Image::ToRGBBuffer() const {
   return buffer;
 }
 
-Vector3<>& Image::operator[](std::pair<std::size_t, std::size_t> position) {
+Vector3<>& Image::operator[](
+    const std::pair<std::size_t, std::size_t>& position) {
   return data_[position.second][position.first];
 }
 
 const Vector3<>& Image::operator[](
-    std::pair<std::size_t, std::size_t> position) const {
+    const std::pair<std::size_t, std::size_t>& position) const {
   return data_[position.second][position.first];
 }
 

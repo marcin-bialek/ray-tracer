@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tuple>
 #include <vector>
 
 #include <rt/math/vector3.hh>
@@ -15,9 +16,9 @@ class Image {
 
   std::vector<double> ToRGBBuffer() const;
 
-  Vector3<>& operator[](std::pair<std::size_t, std::size_t> position);
+  Vector3<>& operator[](const std::pair<std::size_t, std::size_t>& position);
   const Vector3<>& operator[](
-      std::pair<std::size_t, std::size_t> position) const;
+      const std::pair<std::size_t, std::size_t>& position) const;
 
  private:
   std::vector<std::vector<Vector3<>>> data_;

@@ -16,7 +16,15 @@ void Mesh::SetTriangles(std::vector<Triangle> triangles) noexcept {
   triangles_ = std::move(triangles);
 }
 
-std::optional<Intersection> Mesh::Hit(const Ray& ray) const {
+std::string Mesh::ToString() const {
+  std::string str = "Mesh\n";
+  if (material_) {
+    str += material_->ToString();
+  }
+  return str;
+}
+
+std::optional<Intersection> Mesh::DoHit(const Ray& ray) const {
   static constexpr auto kEpsilon = 0.00001;
   const Triangle* min_triangle = nullptr;
   auto min_t = std::numeric_limits<double>::infinity();
@@ -69,10 +77,6 @@ std::optional<Intersection> Mesh::Hit(const Ray& ray) const {
             min_u * min_triangle->texture_coords[1].y +
             min_v * min_triangle->texture_coords[2].y;
   return inter;
-}
-
-std::string Mesh::ToString() const {
-  return "Mesh";
 }
 
 }  // namespace rt
