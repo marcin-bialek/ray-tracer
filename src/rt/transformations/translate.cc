@@ -2,6 +2,10 @@
 
 namespace rt {
 
+Translate::Translate(const Vector3<>& value) noexcept {
+  SetVector(value);
+}
+
 const Vector3<>& Translate::vector() const noexcept {
   return vector_;
 }
@@ -16,9 +20,7 @@ Translate& Translate::SetVector(const Vector3<>& value) noexcept {
 }
 
 std::unique_ptr<Transformation> Translate::Inverse() const {
-  auto t = std::make_unique<Translate>();
-  t->SetVector(-vector_);
-  return std::move(t);
+  return std::make_unique<Translate>(-vector_);
 }
 
 }  // namespace rt

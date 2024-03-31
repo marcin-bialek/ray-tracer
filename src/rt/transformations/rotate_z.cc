@@ -2,6 +2,10 @@
 
 namespace rt {
 
+RotateZ::RotateZ(const Angle<>& value) noexcept {
+  SetAngle(value);
+}
+
 const Angle<>& RotateZ::angle() const noexcept {
   return angle_;
 }
@@ -17,9 +21,7 @@ RotateZ& RotateZ::SetAngle(const Angle<>& value) noexcept {
 }
 
 std::unique_ptr<Transformation> RotateZ::Inverse() const {
-  auto t = std::make_unique<RotateZ>();
-  t->SetAngle(-angle_);
-  return std::move(t);
+  return std::make_unique<RotateZ>(-angle_);
 }
 
 }  // namespace rt

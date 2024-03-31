@@ -9,6 +9,7 @@ namespace rt {
 class RotateX : public Transformation {
  public:
   explicit RotateX() noexcept = default;
+  explicit RotateX(const Angle<>& value) noexcept;
 
   const Angle<>& angle() const noexcept;
 

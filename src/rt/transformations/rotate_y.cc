@@ -4,6 +4,10 @@
 
 namespace rt {
 
+RotateY::RotateY(const Angle<>& value) noexcept {
+  SetAngle(value);
+}
+
 const Angle<>& RotateY::angle() const noexcept {
   return angle_;
 }
@@ -19,9 +23,7 @@ RotateY& RotateY::SetAngle(const Angle<>& value) noexcept {
 }
 
 std::unique_ptr<Transformation> RotateY::Inverse() const {
-  auto t = std::make_unique<RotateY>();
-  t->SetAngle(-angle_);
-  return std::move(t);
+  return std::make_unique<RotateY>(-angle_);
 }
 
 }  // namespace rt

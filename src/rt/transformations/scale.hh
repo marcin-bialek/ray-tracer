@@ -9,6 +9,7 @@ namespace rt {
 class Scale : public Transformation {
  public:
   explicit Scale() noexcept = default;
+  explicit Scale(const Vector3<>& value) noexcept;
 
   const Vector3<>& vector() const noexcept;
 

@@ -4,6 +4,10 @@
 
 namespace rt {
 
+RotateX::RotateX(const Angle<>& value) noexcept {
+  SetAngle(value);
+}
+
 const Angle<>& RotateX::angle() const noexcept {
   return angle_;
 }
@@ -19,9 +23,7 @@ RotateX& RotateX::SetAngle(const Angle<>& value) noexcept {
 }
 
 std::unique_ptr<Transformation> RotateX::Inverse() const {
-  auto t = std::make_unique<RotateX>();
-  t->SetAngle(-angle_);
-  return std::move(t);
+  return std::make_unique<RotateX>(-angle_);
 }
 
 }  // namespace rt
