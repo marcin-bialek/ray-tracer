@@ -29,13 +29,18 @@ bool TransformationLoader::IsTransformation(
 
 TransformationLoader::TransformationPtr
 TransformationLoader::LoadTranslation() {
-  auto transformation = std::make_unique<Translate>();
   try {
-    transformation->SetVector(GetAttrVector3<>(element_));
+    auto animation = GetOptionalAttr<std::string>(element_, "animation");
+    if (animation.has_value()) {
+      auto begin = GetAttrVector3<>(GetFirst(element_, "begin"));
+      auto end = GetAttrVector3<>(GetFirst(element_, "end"));
+      auto anim = LoadAnimation<Vector3<>>(element_, begin, end);
+      return std::make_unique<Translate>(std::move(anim));
+    }
+    return std::make_unique<Translate>(GetAttrVector3<>(element_));
   } catch (const std::exception& err) {
     throw RuntimeError{"error loading translation, {}", err.what()};
   }
-  return std::move(transformation);
 }
 
 TransformationLoader::TransformationPtr TransformationLoader::LoadScaling() {

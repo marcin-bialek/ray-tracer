@@ -14,16 +14,12 @@ template <Numeric Tp = double>
 struct Matrix4 {
   std::array<std::array<Tp, 4>, 4> data{};
 
-  constexpr Matrix4() noexcept = default;
-
-  static constexpr Matrix4<Tp> Identity() noexcept {
-    Matrix4<Tp> m{};
+  constexpr Matrix4() noexcept {
     for (std::size_t r = 0; r < 4; ++r) {
       for (std::size_t c = 0; c < 4; ++c) {
-        m.data[r][c] = r == c ? 1 : 0;
+        data[r][c] = r == c ? 1 : 0;
       }
     }
-    return m;
   }
 
   constexpr const Tp& operator[](

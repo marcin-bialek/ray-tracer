@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include <rt/common/image.hh>
 #include <rt/scene/scene.hh>
@@ -14,11 +15,15 @@ class Renderer {
  public:
   explicit Renderer() noexcept = default;
 
-  std::unique_ptr<Image> Render(const Scene& scene);
+  std::vector<std::unique_ptr<Image>> Render(
+      const Scene& scene,
+      const std::chrono::milliseconds& duration =
+          std::chrono::milliseconds::zero(),
+      std::size_t fps = 30);
 
  private:
   const Scene* scene_;
-  std::unique_ptr<Image> image_;
+  std::chrono::milliseconds t_;
 
   std::optional<Intersection> Hit(const Ray& ray);
   Ray GetReflectedRay(const Ray& ray, const Intersection& intersection);

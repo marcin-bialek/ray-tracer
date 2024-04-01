@@ -102,6 +102,12 @@ constexpr Vector3<Tp> operator*(const Vector3<Tp>& v, Up s) noexcept {
   return s * v;
 }
 
+template <Numeric Tp>
+constexpr Vector3<Tp> operator*(const Vector3<Tp>& a,
+                                const Vector3<Tp>& b) noexcept {
+  return a.Hadamard(b);
+}
+
 template <Numeric Tp, Numeric Up>
 constexpr Vector3<Tp> operator/(const Vector3<Tp>& v, Up s) noexcept {
   return {
@@ -112,9 +118,9 @@ constexpr Vector3<Tp> operator/(const Vector3<Tp>& v, Up s) noexcept {
 }
 
 template <Numeric Tp>
-constexpr Vector3<Tp> operator*(const Vector3<Tp>& a,
+constexpr Vector3<Tp> operator/(const Vector3<Tp>& a,
                                 const Vector3<Tp>& b) noexcept {
-  return a.Cross(b);
+  return a.Hadamard(b.Inverse());
 }
 
 template <Numeric Tp>

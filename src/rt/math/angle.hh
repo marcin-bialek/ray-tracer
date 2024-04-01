@@ -48,4 +48,24 @@ constexpr Angle<Tp> operator-(const Angle<Tp>& angle) noexcept {
   return -angle.degrees();
 }
 
+template <Numeric Tp = double>
+constexpr Angle<Tp> operator+(const Angle<Tp>& a, const Angle<Tp>& b) noexcept {
+  return a.degrees() + b.degrees();
+}
+
+template <Numeric Tp = double>
+constexpr Angle<Tp> operator-(const Angle<Tp>& a, const Angle<Tp>& b) noexcept {
+  return a.degrees() - b.degrees();
+}
+
+template <Numeric Tp = double>
+constexpr Angle<Tp> operator*(const Angle<Tp>& a, const Angle<Tp>& b) noexcept {
+  return a.degrees() * b.degrees();
+}
+
+template <Numeric Tp = double>
+constexpr Angle<Tp> operator/(const Angle<Tp>& a, const Angle<Tp>& b) noexcept {
+  return a.degrees() / b.degrees();
+}
+
 }  // namespace rt

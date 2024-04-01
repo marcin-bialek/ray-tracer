@@ -1,49 +1,39 @@
 #pragma once
 
+#include <chrono>
 #include <memory>
 
-#include <rt/common/exception.hh>
 #include <rt/math/matrix4.hh>
-#include <rt/math/vector3.hh>
 
 namespace rt {
 
 class Transformation {
  public:
-  constexpr explicit Transformation() noexcept
-      : matrix{Matrix4<>::Identity()} {}
-  constexpr explicit Transformation(const Matrix4<>& matrix) noexcept
-      : matrix{matrix} {}
-  constexpr virtual ~Transformation() noexcept = default;
+  virtual ~Transformation() noexcept = default;
+  virtual void SetTime(const std::chrono::milliseconds& time) noexcept = 0;
+  virtual std::unique_ptr<Transformation> Inverse() const noexcept = 0;
 
-  constexpr Vector3<> ApplyPoint(const Vector3<>& v) const noexcept {
-    return matrix.MultiplyPoint(v);
+  inline const Matrix4<>& GetMatrix() const noexcept {
+    return matrix_;
   }
 
-  constexpr Vector3<> ApplyVector(const Vector3<>& v) const noexcept {
-    return matrix.MultiplyVector(v);
-  }
-
-  virtual inline std::unique_ptr<Transformation> Inverse() const {
-    throw RuntimeError{"inverse of a general transformation not implemented"};
-  }
-
-  Matrix4<> matrix;
+ protected:
+  Matrix4<> matrix_{};
 };
 
-constexpr Transformation operator*(const Transformation& a,
-                                   const Transformation& b) noexcept {
-  return Transformation{a.matrix * b.matrix};
+constexpr Matrix4<> operator*(const Transformation& a,
+                              const Transformation& b) noexcept {
+  return a.GetMatrix() * b.GetMatrix();
 }
 
-constexpr Transformation operator*(const Matrix4<>& a,
-                                   const Transformation& b) noexcept {
-  return Transformation{a * b.matrix};
+constexpr Matrix4<> operator*(const Matrix4<>& a,
+                              const Transformation& b) noexcept {
+  return a * b.GetMatrix();
 }
 
-constexpr Transformation operator*(const Transformation& a,
-                                   const Matrix4<>& b) noexcept {
-  return Transformation{a.matrix * b};
+constexpr Matrix4<> operator*(const Transformation& a,
+                              const Matrix4<>& b) noexcept {
+  return a.GetMatrix() * b;
 }
 
 }  // namespace rt

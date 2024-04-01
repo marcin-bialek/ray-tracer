@@ -1,6 +1,7 @@
 #pragma once
 
 #include <limits>
+#include <optional>
 #include <string>
 
 #include <tinyxml2/tinyxml2.hh>
@@ -125,6 +126,15 @@ tinyxml2::XMLElement* GetFirst(tinyxml2::XMLElement* element,
 
 template <typename Tp>
 auto GetAttr(tinyxml2::XMLElement* element, std::string_view name) {
+  return details::AttrGetter<Tp>::Get(element, name);
+}
+
+template <typename Tp>
+std::optional<Tp> GetOptionalAttr(tinyxml2::XMLElement* element,
+                                  std::string_view name) {
+  if (!element->Attribute(name.data())) {
+    return std::nullopt;
+  }
   return details::AttrGetter<Tp>::Get(element, name);
 }
 

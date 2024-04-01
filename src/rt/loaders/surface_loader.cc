@@ -69,7 +69,7 @@ void SurfaceLoader::LoadTransformations(Surface* surface) {
   if (elm_transform) {
     ForeachChild(elm_transform, [&](auto elm) {
       TransformationLoader loader{elm};
-      surface->AddTransformation(*loader.Load());
+      surface->AddTransformation(loader.Load());
     });
   }
 }

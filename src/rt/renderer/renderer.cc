@@ -11,34 +11,49 @@ namespace rt {
 
 static constexpr auto kEpsilon = 0.0001;
 
-std::unique_ptr<Image> Renderer::Render(const Scene& scene) {
+std::vector<std::unique_ptr<Image>> Renderer::Render(
+    const Scene& scene, const std::chrono::milliseconds& duration,
+    std::size_t fps) {
   scene_ = &scene;
   auto camera = scene.camera();
   auto viewport = camera->viewport();
   auto du = viewport.u / camera->width();
   auto dv = viewport.v / camera->height();
   auto pixel_origin = viewport.origin + (du + dv) / 2;
-  image_ = std::make_unique<Image>(camera->width(), camera->height());
+
+  std::vector<std::unique_ptr<Image>> images;
+  std::size_t frames = std::max<std::size_t>(
+      1, static_cast<std::size_t>(static_cast<double>(duration.count()) /
+                                  1000.0 * fps));
 
   indicators::show_console_cursor(false);
-  indicators::ProgressBar bar{indicators::option::BarWidth{50},
-                              indicators::option::MaxProgress{camera->height()},
-                              indicators::option::PrefixText{"Rendering "},
-                              indicators::option::ShowPercentage{true},
-                              indicators::option::ShowElapsedTime{true},
-                              indicators::option::ShowRemainingTime{true}};
-  for (std::size_t y = 0; y < camera->height(); ++y) {
-    auto row = pixel_origin + dv * y;
-    for (std::size_t x = 0; x < camera->width(); ++x) {
-      auto pixel = row + du * x;
-      auto direction = (pixel - camera->position()).Unit();
-      (*image_)[{x, y}] =
-          ProcessRay({camera->position(), direction}, camera->max_bounces());
+  indicators::ProgressBar bar{
+      indicators::option::BarWidth{50},
+      indicators::option::MaxProgress{frames * camera->height()},
+      indicators::option::PrefixText{"Rendering "},
+      indicators::option::ShowPercentage{true},
+      indicators::option::ShowElapsedTime{true},
+      indicators::option::ShowRemainingTime{true}};
+
+  for (std::size_t f = 0; f < frames; ++f) {
+    t_ = std::chrono::milliseconds{static_cast<std::size_t>(
+        static_cast<double>(f) / frames * duration.count())};
+    auto& image = images.emplace_back(
+        std::make_unique<Image>(camera->width(), camera->height()));
+
+    for (std::size_t y = 0; y < camera->height(); ++y) {
+      auto row = pixel_origin + dv * y;
+      for (std::size_t x = 0; x < camera->width(); ++x) {
+        auto pixel = row + du * x;
+        auto direction = (pixel - camera->position()).Unit();
+        (*image)[{x, y}] =
+            ProcessRay({camera->position(), direction}, camera->max_bounces());
+      }
+      bar.tick();
     }
-    bar.tick();
   }
   indicators::show_console_cursor(true);
-  return std::move(image_);
+  return std::move(images);
 }
 
 std::optional<Intersection> Renderer::Hit(const Ray& ray) {
@@ -46,7 +61,7 @@ std::optional<Intersection> Renderer::Hit(const Ray& ray) {
   Intersection inter{};
   inter.distance = std::numeric_limits<double>::infinity();
   for (auto& s : scene_->surfaces()) {
-    auto i = s->Hit(ray);
+    auto i = s->Hit(ray, t_);
     if (i.has_value() && i->distance < inter.distance) {
       hit = true;
       inter = *i;

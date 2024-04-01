@@ -76,15 +76,28 @@ int main(int argc, char* argv[]) {
     std::cout << scene->ToString() << std::endl;
 
     rt::Renderer renderer{};
-    auto image = renderer.Render(*scene);
+    auto images = renderer.Render(*scene, std::chrono::seconds{2});
 
     auto output_file = parser.get<std::string>("output");
     std::cout << "Saving " << output_file << std::endl;
-    rt::ImagerWriter::Config iw_config{};
-    iw_config.path = output_file;
-    iw_config.gamma_correction = parser.get<bool>("-g");
-    rt::ImagerWriter writer{iw_config};
-    writer.Write(*image);
+    if (images.size() == 1) {
+      rt::ImagerWriter::Config iw_config{};
+      iw_config.path = output_file;
+      iw_config.gamma_correction = parser.get<bool>("-g");
+      rt::ImagerWriter writer{iw_config};
+      writer.Write(*images[0]);
+    } else {
+      for (std::size_t i = 0; i < images.size(); ++i) {
+        rt::ImagerWriter::Config iw_config{};
+        iw_config.path = output_file;
+        std::filesystem::create_directories(iw_config.path);
+        iw_config.path = iw_config.path / std::format("{}.png", i);
+        iw_config.gamma_correction = parser.get<bool>("-g");
+        rt::ImagerWriter writer{iw_config};
+        writer.Write(*images[i]);
+      }
+    }
+
   } catch (const std::exception& err) {
     std::cerr << err.what() << std::endl;
     return EXIT_FAILURE;

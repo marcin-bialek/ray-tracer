@@ -46,8 +46,8 @@ Viewport Camera::viewport() const noexcept {
   auto width = 2.0 * h * fl;
   auto height = aspect_ratio() * width;
   auto w = (position_ - lookat_).Unit();
-  auto u = (up_ * w).Unit();
-  auto v = w * u;
+  auto u = up_.Cross(w).Unit();
+  auto v = w.Cross(u);
   Viewport view{};
   view.u = width * u;
   view.v = height * -v;
