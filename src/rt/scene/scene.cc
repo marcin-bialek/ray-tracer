@@ -8,12 +8,12 @@ const Vector3<>& Scene::background() const noexcept {
   return background_;
 }
 
-Camera* Scene::camera() noexcept {
-  return camera_.get();
+Camera& Scene::camera() noexcept {
+  return *camera_;
 }
 
-const Camera* Scene::camera() const noexcept {
-  return camera_.get();
+const Camera& Scene::camera() const noexcept {
+  return *camera_;
 }
 
 std::span<const std::unique_ptr<Surface>> Scene::surfaces() const noexcept {
@@ -41,6 +41,13 @@ Scene& Scene::AddLight(std::unique_ptr<Light> light) noexcept {
 
 Scene& Scene::AddSurface(std::unique_ptr<Surface> surface) noexcept {
   surfaces_.push_back(std::move(surface));
+  return *this;
+}
+
+Scene& Scene::SetTime(std::chrono::milliseconds time) noexcept {
+  for (auto& surface : surfaces_) {
+    surface->SetTime(time);
+  }
   return *this;
 }
 

@@ -10,7 +10,7 @@ namespace rt {
 class Transformation {
  public:
   virtual ~Transformation() noexcept = default;
-  virtual void SetTime(const std::chrono::milliseconds& time) noexcept = 0;
+  virtual void SetTime(std::chrono::milliseconds time) noexcept = 0;
   virtual std::unique_ptr<Transformation> Inverse() const noexcept = 0;
 
   inline const Matrix4<>& GetMatrix() const noexcept {

@@ -10,8 +10,11 @@ namespace rt {
 
 struct Viewport {
   Vector3<> origin;
+  Vector3<> pixel_origin;
   Vector3<> u;
   Vector3<> v;
+  Vector3<> du;
+  Vector3<> dv;
 };
 
 class Camera {

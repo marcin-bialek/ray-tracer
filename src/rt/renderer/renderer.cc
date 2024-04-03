@@ -11,57 +11,41 @@ namespace rt {
 
 static constexpr auto kEpsilon = 0.0001;
 
-std::vector<std::unique_ptr<Image>> Renderer::Render(
-    const Scene& scene, const std::chrono::milliseconds& duration,
-    std::size_t fps) {
-  scene_ = &scene;
-  auto camera = scene.camera();
-  auto viewport = camera->viewport();
-  auto du = viewport.u / camera->width();
-  auto dv = viewport.v / camera->height();
-  auto pixel_origin = viewport.origin + (du + dv) / 2;
+Renderer::Renderer(const Scene& scene) noexcept
+    : scene_{scene}, camera_{scene.camera()}, viewport_{camera_.viewport()} {}
 
-  std::vector<std::unique_ptr<Image>> images;
-  std::size_t frames = std::max<std::size_t>(
-      1, static_cast<std::size_t>(static_cast<double>(duration.count()) /
-                                  1000.0 * fps));
+std::unique_ptr<Image> Renderer::Render() {
+  auto image = std::make_unique<Image>(camera_.width(), camera_.height());
 
   indicators::show_console_cursor(false);
-  indicators::ProgressBar bar{
-      indicators::option::BarWidth{50},
-      indicators::option::MaxProgress{frames * camera->height()},
-      indicators::option::PrefixText{"Rendering "},
-      indicators::option::ShowPercentage{true},
-      indicators::option::ShowElapsedTime{true},
-      indicators::option::ShowRemainingTime{true}};
+  indicators::ProgressBar bar{indicators::option::BarWidth{50},
+                              indicators::option::MaxProgress{camera_.height()},
+                              indicators::option::PrefixText{"Rendering "},
+                              indicators::option::ShowPercentage{true},
+                              indicators::option::ShowElapsedTime{true},
+                              indicators::option::ShowRemainingTime{true}};
 
-  for (std::size_t f = 0; f < frames; ++f) {
-    t_ = std::chrono::milliseconds{static_cast<std::size_t>(
-        static_cast<double>(f) / frames * duration.count())};
-    auto& image = images.emplace_back(
-        std::make_unique<Image>(camera->width(), camera->height()));
-
-    for (std::size_t y = 0; y < camera->height(); ++y) {
-      auto row = pixel_origin + dv * y;
-      for (std::size_t x = 0; x < camera->width(); ++x) {
-        auto pixel = row + du * x;
-        auto direction = (pixel - camera->position()).Unit();
-        (*image)[{x, y}] =
-            ProcessRay({camera->position(), direction}, camera->max_bounces());
-      }
-      bar.tick();
+  for (std::size_t y = 0; y < camera_.height(); ++y) {
+    auto row = viewport_.pixel_origin + viewport_.dv * y;
+    for (std::size_t x = 0; x < camera_.width(); ++x) {
+      auto pixel = row + viewport_.du * x;
+      auto direction = (pixel - camera_.position()).Unit();
+      auto ray = Ray{camera_.position(), direction};
+      (*image)[{x, y}] = ProcessRay(ray, camera_.max_bounces());
     }
+    bar.tick();
   }
+
   indicators::show_console_cursor(true);
-  return std::move(images);
+  return std::move(image);
 }
 
 std::optional<Intersection> Renderer::Hit(const Ray& ray) {
   bool hit = false;
   Intersection inter{};
   inter.distance = std::numeric_limits<double>::infinity();
-  for (auto& s : scene_->surfaces()) {
-    auto i = s->Hit(ray, t_);
+  for (auto& s : scene_.surfaces()) {
+    auto i = s->Hit(ray);
     if (i.has_value() && i->distance < inter.distance) {
       hit = true;
       inter = *i;
@@ -100,7 +84,7 @@ Ray Renderer::GetRefractedRay(const Ray& ray,
 Vector3<> Renderer::Illuminate(const Ray& ray,
                                const Intersection& intersection) {
   Vector3<> color{};
-  for (auto& light : scene_->lights()) {
+  for (auto& light : scene_.lights()) {
     auto shadow_ray = light->GetShadowRay(intersection.point);
     if (shadow_ray.has_value()) {
       auto distance = light->GetDistance(shadow_ray->origin);
@@ -118,7 +102,7 @@ Vector3<> Renderer::Illuminate(const Ray& ray,
 Vector3<> Renderer::ProcessRay(const Ray& ray, std::size_t bounces) {
   auto intersection = Hit(ray);
   if (!intersection.has_value()) {
-    return scene_->background();
+    return scene_.background();
   }
   auto color = Illuminate(ray, *intersection);
   if (bounces == 0) {

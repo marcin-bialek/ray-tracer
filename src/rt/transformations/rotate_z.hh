@@ -16,13 +16,12 @@ class RotateZ : public Transformation {
   const Angle<>& angle() const noexcept;
 
   RotateZ& SetAngle(const Angle<>& value) noexcept;
-  void SetTime(const std::chrono::milliseconds& time) noexcept override;
+  void SetTime(std::chrono::milliseconds time) noexcept override;
 
   std::unique_ptr<Transformation> Inverse() const noexcept override;
 
  private:
-  Angle<> angle_{};
-  std::unique_ptr<Animation<Angle<>>> animation_{};
+  std::unique_ptr<Animation<Angle<>>> angle_{};
 };
 
 }  // namespace rt

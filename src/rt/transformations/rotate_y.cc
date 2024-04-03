@@ -2,38 +2,36 @@
 
 #include <cmath>
 
+#include <rt/animations/static_animation.hh>
+
 namespace rt {
 
-RotateY::RotateY(const Angle<>& value) noexcept {
-  SetAngle(value);
-}
+RotateY::RotateY(const Angle<>& value) noexcept
+    : RotateY{std::make_unique<StaticAnimation<Angle<>>>(value)} {}
 
-RotateY::RotateY(std::unique_ptr<Animation<Angle<>>> value) noexcept {
-  animation_ = std::move(value);
+RotateY::RotateY(std::unique_ptr<Animation<Angle<>>> value) noexcept
+    : angle_{std::move(value)} {
   SetTime(std::chrono::milliseconds{0});
 }
 
 const Angle<>& RotateY::angle() const noexcept {
-  return angle_;
+  return angle_->Get();
 }
 
 RotateY& RotateY::SetAngle(const Angle<>& value) noexcept {
-  angle_ = value;
-  matrix_[{0, 0}] = std::cos(angle_.radians());
-  matrix_[{0, 2}] = std::sin(angle_.radians());
+  matrix_[{0, 0}] = std::cos((*angle_)->radians());
+  matrix_[{0, 2}] = std::sin((*angle_)->radians());
   matrix_[{2, 0}] = -matrix_[{0, 2}];
   matrix_[{2, 2}] = matrix_[{0, 0}];
   return *this;
 }
 
-void RotateY::SetTime(const std::chrono::milliseconds& time) noexcept {
-  if (animation_) {
-    SetAngle(animation_->Get(time));
-  }
+void RotateY::SetTime(std::chrono::milliseconds time) noexcept {
+  SetAngle(*angle_->SetTime(time));
 }
 
 std::unique_ptr<Transformation> RotateY::Inverse() const noexcept {
-  return std::make_unique<RotateY>(-angle_);
+  return std::make_unique<RotateY>(-angle_->Get());
 }
 
 }  // namespace rt

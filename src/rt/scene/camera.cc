@@ -41,6 +41,7 @@ double Camera::focal_length() const noexcept {
 }
 
 Viewport Camera::viewport() const noexcept {
+  Viewport view{};
   auto fl = focal_length();
   auto h = std::tan(horizontal_fov_.radians());
   auto width = 2.0 * h * fl;
@@ -48,10 +49,12 @@ Viewport Camera::viewport() const noexcept {
   auto w = (position_ - lookat_).Unit();
   auto u = up_.Cross(w).Unit();
   auto v = w.Cross(u);
-  Viewport view{};
   view.u = width * u;
   view.v = height * -v;
+  view.du = view.u / width_;
+  view.dv = view.v / height_;
   view.origin = position_ - (fl * w) - (view.u / 2) - (view.v / 2);
+  view.pixel_origin = view.origin + (view.du + view.dv) / 2;
   return view;
 }
 

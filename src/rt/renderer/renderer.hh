@@ -13,17 +13,14 @@ namespace rt {
 
 class Renderer {
  public:
-  explicit Renderer() noexcept = default;
+  explicit Renderer(const Scene& scene) noexcept;
 
-  std::vector<std::unique_ptr<Image>> Render(
-      const Scene& scene,
-      const std::chrono::milliseconds& duration =
-          std::chrono::milliseconds::zero(),
-      std::size_t fps = 30);
+  std::unique_ptr<Image> Render();
 
  private:
-  const Scene* scene_;
-  std::chrono::milliseconds t_;
+  const Scene& scene_;
+  const Camera& camera_;
+  Viewport viewport_;
 
   std::optional<Intersection> Hit(const Ray& ray);
   Ray GetReflectedRay(const Ray& ray, const Intersection& intersection);

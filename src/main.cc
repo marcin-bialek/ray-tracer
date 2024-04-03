@@ -12,7 +12,7 @@ static void ApplyCommandLineArgs(argparse::ArgumentParser& parser,
                                  rt::Scene& scene) {
   auto resolution = parser.present<std::vector<std::size_t>>("-r");
   if (resolution.has_value()) {
-    scene.camera()->SetResolution(resolution->at(0), resolution->at(1));
+    scene.camera().SetResolution(resolution->at(0), resolution->at(1));
   }
   auto background = parser.present<std::vector<double>>("-b");
   if (background.has_value()) {
@@ -24,7 +24,7 @@ static void ApplyCommandLineArgs(argparse::ArgumentParser& parser,
   }
   auto max_bounces = parser.present<std::size_t>("max-bounces");
   if (max_bounces.has_value()) {
-    scene.camera()->SetMaxBounces(*max_bounces);
+    scene.camera().SetMaxBounces(*max_bounces);
   }
 }
 
@@ -49,6 +49,14 @@ int main(int argc, char* argv[]) {
   parser.add_argument("-o", "--output")
       .default_value("image.png")
       .help("output file");
+  parser.add_argument("-d", "--duration")
+      .scan<'g', double>()
+      .default_value<double>(0)
+      .help("animation duration in seconds");
+  parser.add_argument("--fps")
+      .scan<'u', std::size_t>()
+      .default_value<std::size_t>(30)
+      .help("frames per second");
 
   try {
     parser.parse_args(argc, argv);
@@ -75,11 +83,20 @@ int main(int argc, char* argv[]) {
     ApplyCommandLineArgs(parser, *scene);
     std::cout << scene->ToString() << std::endl;
 
-    rt::Renderer renderer{};
-    auto images = renderer.Render(*scene, std::chrono::seconds{2});
+    rt::Renderer renderer{*scene};
+    std::vector<std::unique_ptr<rt::Image>> images;
+    auto duration = parser.get<double>("duration");
+    auto fps = parser.get<std::size_t>("fps");
+    auto frames = static_cast<std::size_t>(duration * fps);
+    for (std::size_t frame = 0; frame < frames; ++frame) {
+      using namespace std::chrono_literals;
+      scene->SetTime(1000ms * frame / fps);
+      images.push_back(renderer.Render());
+    }
 
     auto output_file = parser.get<std::string>("output");
     std::cout << "Saving " << output_file << std::endl;
+
     if (images.size() == 1) {
       rt::ImagerWriter::Config iw_config{};
       iw_config.path = output_file;
@@ -97,7 +114,6 @@ int main(int argc, char* argv[]) {
         writer.Write(*images[i]);
       }
     }
-
   } catch (const std::exception& err) {
     std::cerr << err.what() << std::endl;
     return EXIT_FAILURE;

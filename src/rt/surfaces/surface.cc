@@ -17,20 +17,27 @@ Surface& Surface::AddTransformation(
   return *this;
 }
 
-std::optional<Intersection> Surface::Hit(
-    const Ray& ray, const std::chrono::milliseconds& time) const {
+Surface& Surface::SetTime(std::chrono::milliseconds time) noexcept {
+  inv_transform_ = Matrix4<>{};
+  for (auto& transform : transforms_) {
+    transform->SetTime(time);
+    inv_transform_ = *transform->Inverse() * inv_transform_;
+  }
+  inv_t_transform_ = inv_transform_.Transpose();
+  return *this;
+}
+
+std::optional<Intersection> Surface::Hit(const Ray& ray) const {
   auto inter = [&] {
     if (transforms_.empty()) {
       return DoHit(ray);
     }
-    UpdateCache(time);
-    auto origin = cache_->inv_transform.MultiplyPoint(ray.origin);
-    auto direction = cache_->inv_transform.MultiplyVector(ray.direction);
+    auto origin = inv_transform_.MultiplyPoint(ray.origin);
+    auto direction = inv_transform_.MultiplyVector(ray.direction);
     auto inter = DoHit({origin, direction});
     if (inter.has_value()) {
       inter->point = ray.At(inter->distance);
-      inter->normal =
-          cache_->inv_t_transform.MultiplyVector(inter->normal).Unit();
+      inter->normal = inv_t_transform_.MultiplyVector(inter->normal).Unit();
     }
     return inter;
   }();
@@ -41,22 +48,6 @@ std::optional<Intersection> Surface::Hit(
     }
   }
   return inter;
-}
-
-void Surface::UpdateCache(const std::chrono::milliseconds& time) const {
-  if (cache_ && cache_->time == time) {
-    return;
-  }
-  if (!cache_) {
-    cache_ = std::make_unique<Cache>();
-  }
-  cache_->time = time;
-  cache_->inv_transform = Matrix4<>{};
-  for (auto& transform : transforms_) {
-    transform->SetTime(time);
-    cache_->inv_transform = *transform->Inverse() * cache_->inv_transform;
-    cache_->inv_t_transform = cache_->inv_transform.Transpose();
-  }
 }
 
 }  // namespace rt

@@ -5,9 +5,9 @@
 namespace rt {
 
 template <Arithmetic Tp>
-class LinearAnimation : public Animation<Tp> {
+class EaseInOutAnimation : public Animation<Tp> {
  public:
-  explicit LinearAnimation(const Tp& begin, const Tp& end) noexcept
+  explicit EaseInOutAnimation(const Tp& begin, const Tp& end) noexcept
       : value_{begin}, begin_{begin}, end_{end} {}
 
   const Tp& Get() const noexcept override {
@@ -16,7 +16,13 @@ class LinearAnimation : public Animation<Tp> {
 
  protected:
   void DoSetTime(double time) noexcept override {
-    value_ = time * (end_ - begin_) + begin_;
+    double t = 0.0;
+    if (time < 0.5) {
+      t = 2.0 * std::pow(time, 2);
+    } else {
+      t = 2.0 * time * (1.0 - time) + 0.5;
+    }
+    value_ = t * (end_ - begin_) + begin_;
   }
 
  private:

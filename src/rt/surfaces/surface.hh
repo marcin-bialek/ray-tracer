@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <optional>
 #include <string>
 #include <vector>
@@ -20,9 +21,8 @@ class Surface {
   Surface& SetMaterial(std::unique_ptr<Material> material) noexcept;
   Surface& AddTransformation(
       std::unique_ptr<Transformation> transformation) noexcept;
-  std::optional<Intersection> Hit(const Ray& ray,
-                                  const std::chrono::milliseconds& time =
-                                      std::chrono::milliseconds::zero()) const;
+  Surface& SetTime(std::chrono::milliseconds time) noexcept;
+  std::optional<Intersection> Hit(const Ray& ray) const;
 
   virtual std::string ToString() const = 0;
 
@@ -33,14 +33,8 @@ class Surface {
   virtual std::optional<Intersection> DoHit(const Ray& ray) const = 0;
 
  private:
-  struct Cache {
-    std::chrono::milliseconds time;
-    Matrix4<> inv_transform;
-    Matrix4<> inv_t_transform;
-  };
-  mutable std::unique_ptr<Cache> cache_;
-
-  void UpdateCache(const std::chrono::milliseconds& time) const;
+  Matrix4<> inv_transform_;
+  Matrix4<> inv_t_transform_;
 };
 
 }  // namespace rt

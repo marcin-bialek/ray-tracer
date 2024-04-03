@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <memory>
 #include <span>
 #include <string>
@@ -17,8 +18,8 @@ class Scene {
   explicit Scene() noexcept = default;
 
   const Vector3<>& background() const noexcept;
-  Camera* camera() noexcept;
-  const Camera* camera() const noexcept;
+  Camera& camera() noexcept;
+  const Camera& camera() const noexcept;
   std::span<const std::unique_ptr<Surface>> surfaces() const noexcept;
   std::span<const std::unique_ptr<Light>> lights() const noexcept;
 
@@ -26,6 +27,7 @@ class Scene {
   Scene& SetCamera(std::unique_ptr<Camera> camera) noexcept;
   Scene& AddLight(std::unique_ptr<Light> light) noexcept;
   Scene& AddSurface(std::unique_ptr<Surface> surface) noexcept;
+  Scene& SetTime(std::chrono::milliseconds time) noexcept;
 
   std::string ToString() const;
 

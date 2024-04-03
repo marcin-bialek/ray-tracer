@@ -16,13 +16,12 @@ class Scale : public Transformation {
   const Vector3<>& vector() const noexcept;
 
   Scale& SetVector(const Vector3<>& value) noexcept;
-  void SetTime(const std::chrono::milliseconds& time) noexcept override;
+  void SetTime(std::chrono::milliseconds time) noexcept override;
 
   std::unique_ptr<Transformation> Inverse() const noexcept override;
 
  private:
-  Vector3<> vector_{};
-  std::unique_ptr<Animation<Vector3<>>> animation_{};
+  std::unique_ptr<Animation<Vector3<>>> vector_{};
 };
 
 }  // namespace rt
