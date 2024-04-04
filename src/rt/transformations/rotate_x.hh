@@ -9,8 +9,7 @@ namespace rt {
 
 class RotateX : public Transformation {
  public:
-  explicit RotateX() noexcept = default;
-  explicit RotateX(const Angle<>& value) noexcept;
+  explicit RotateX(const Angle<>& value = 0) noexcept;
   explicit RotateX(std::unique_ptr<Animation<Angle<>>> value) noexcept;
 
   const Angle<>& angle() const noexcept;
