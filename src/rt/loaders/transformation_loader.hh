@@ -7,6 +7,7 @@
 #include <tinyxml2/tinyxml2.hh>
 
 #include <rt/animations/animation.hh>
+#include <rt/animations/ease_in_out_animation.hh>
 #include <rt/animations/linear_animation.hh>
 #include <rt/common/exception.hh>
 #include <rt/common/xml.hh>
@@ -40,6 +41,9 @@ class TransformationLoader {
     auto type = GetAttr<std::string>(element_, "animation");
     if (type == "linear") {
       anim = std::make_unique<LinearAnimation<Tp>>(std::forward<Args>(args)...);
+    } else if (type == "ease-in-out") {
+      anim =
+          std::make_unique<EaseInOutAnimation<Tp>>(std::forward<Args>(args)...);
     } else {
       throw RuntimeError{"unknown animation {}", type};
     }
@@ -49,6 +53,17 @@ class TransformationLoader {
         1000 * GetOptionalAttr<double>(element_, "delay").value_or(0))});
     anim->SetIterations(GetOptionalAttr<std::size_t>(element_, "iterations")
                             .value_or(std::numeric_limits<std::size_t>::max()));
+    auto direction =
+        GetOptionalAttr<std::string>(element_, "direction").value_or("forward");
+    if (direction == "forward") {
+      anim->SetDirection(Direction::kForward);
+    } else if (direction == "reverse") {
+      anim->SetDirection(Direction::kReverse);
+    } else if (direction == "alternate") {
+      anim->SetDirection(Direction::kAlternate);
+    } else if (direction == "alternate-reverse") {
+      anim->SetDirection(Direction::kAlternateReverse);
+    }
     return std::move(anim);
   }
 

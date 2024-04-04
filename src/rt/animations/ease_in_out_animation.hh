@@ -18,9 +18,9 @@ class EaseInOutAnimation : public Animation<Tp> {
   void DoSetTime(double time) noexcept override {
     double t = 0.0;
     if (time < 0.5) {
-      t = 2.0 * std::pow(time, 2);
+      t = 2.0 * time * time;
     } else {
-      t = 2.0 * time * (1.0 - time) + 0.5;
+      t = 2.0 * time * (2.0 - time) - 1.0;
     }
     value_ = t * (end_ - begin_) + begin_;
   }
