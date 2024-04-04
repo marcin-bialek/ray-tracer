@@ -20,16 +20,16 @@ std::size_t Image::height() const noexcept {
   return height_;
 }
 
-std::vector<double> Image::ToRGBABuffer() const {
-  std::vector<double> buffer(4 * width_ * height_, 0);
+std::vector<uint8_t> Image::ToRGBABuffer() const {
+  std::vector<uint8_t> buffer(4 * width_ * height_, 0);
   auto p = buffer.begin();
   for (auto& row : data_) {
     for (auto& pixel : row) {
       auto c = pixel.Clamp(0.0, 1.0);
-      *p++ = c.x;
-      *p++ = c.y;
-      *p++ = c.z;
-      *p++ = 1.0;
+      *p++ = static_cast<std::size_t>(255.0 * c.x);
+      *p++ = static_cast<std::size_t>(255.0 * c.y);
+      *p++ = static_cast<std::size_t>(255.0 * c.z);
+      *p++ = 255;
     }
   }
   return buffer;

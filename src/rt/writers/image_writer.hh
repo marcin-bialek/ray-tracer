@@ -18,7 +18,9 @@ class ImageWriter {
   void Write(const Image& image, std::size_t frame = 0);
 
  private:
-  struct Implementation;
+  class Implementation;
+  class OIIOImplementation;
+  class GifImplementation;
   std::unique_ptr<Implementation> impl_;
 };
 
