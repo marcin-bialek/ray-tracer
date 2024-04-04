@@ -14,6 +14,7 @@ concept Arithmetic = requires(Tp value) {
   { std::declval<Tp>() - std::declval<Tp>() } -> std::convertible_to<Tp>;
   { std::declval<Tp>() * std::declval<Tp>() } -> std::convertible_to<Tp>;
   { std::declval<Tp>() / std::declval<Tp>() } -> std::convertible_to<Tp>;
+  { std::declval<double>() * std::declval<Tp>() } -> std::convertible_to<Tp>;
 };
 
 }  // namespace rt

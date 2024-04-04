@@ -44,43 +44,63 @@ TransformationLoader::LoadTranslation() {
 }
 
 TransformationLoader::TransformationPtr TransformationLoader::LoadScaling() {
-  auto transformation = std::make_unique<Scale>();
   try {
-    transformation->SetVector(GetAttrVector3<>(element_));
+    auto animation = GetOptionalAttr<std::string>(element_, "animation");
+    if (animation.has_value()) {
+      auto begin = GetAttrVector3<>(GetFirst(element_, "begin"));
+      auto end = GetAttrVector3<>(GetFirst(element_, "end"));
+      auto anim = LoadAnimation<Vector3<>>(element_, begin, end);
+      return std::make_unique<Scale>(std::move(anim));
+    }
+    return std::make_unique<Scale>(GetAttrVector3<>(element_));
   } catch (const std::exception& err) {
     throw RuntimeError{"error loading scaling, {}", err.what()};
   }
-  return std::move(transformation);
 }
 
 TransformationLoader::TransformationPtr TransformationLoader::LoadRotationX() {
-  auto transformation = std::make_unique<RotateX>();
   try {
-    transformation->SetAngle(GetAttrAngle<>(element_, "theta"));
+    auto animation = GetOptionalAttr<std::string>(element_, "animation");
+    if (animation.has_value()) {
+      auto begin = GetAttrAngle<>(GetFirst(element_, "begin"), "theta");
+      auto end = GetAttrAngle<>(GetFirst(element_, "end"), "theta");
+      auto anim = LoadAnimation<Angle<>>(element_, begin, end);
+      return std::make_unique<RotateX>(std::move(anim));
+    }
+    return std::make_unique<RotateX>(GetAttrAngle<>(element_, "theta"));
   } catch (const std::exception& err) {
     throw RuntimeError{"error loading rotation X, {}", err.what()};
   }
-  return std::move(transformation);
 }
 
 TransformationLoader::TransformationPtr TransformationLoader::LoadRotationY() {
-  auto transformation = std::make_unique<RotateY>();
   try {
-    transformation->SetAngle(GetAttrAngle<>(element_, "theta"));
+    auto animation = GetOptionalAttr<std::string>(element_, "animation");
+    if (animation.has_value()) {
+      auto begin = GetAttrAngle<>(GetFirst(element_, "begin"), "theta");
+      auto end = GetAttrAngle<>(GetFirst(element_, "end"), "theta");
+      auto anim = LoadAnimation<Angle<>>(element_, begin, end);
+      return std::make_unique<RotateY>(std::move(anim));
+    }
+    return std::make_unique<RotateY>(GetAttrAngle<>(element_, "theta"));
   } catch (const std::exception& err) {
     throw RuntimeError{"error loading rotation Y, {}", err.what()};
   }
-  return std::move(transformation);
 }
 
 TransformationLoader::TransformationPtr TransformationLoader::LoadRotationZ() {
-  auto transformation = std::make_unique<RotateZ>();
   try {
-    transformation->SetAngle(GetAttrAngle<>(element_, "theta"));
+    auto animation = GetOptionalAttr<std::string>(element_, "animation");
+    if (animation.has_value()) {
+      auto begin = GetAttrAngle<>(GetFirst(element_, "begin"), "theta");
+      auto end = GetAttrAngle<>(GetFirst(element_, "end"), "theta");
+      auto anim = LoadAnimation<Angle<>>(element_, begin, end);
+      return std::make_unique<RotateZ>(std::move(anim));
+    }
+    return std::make_unique<RotateZ>(GetAttrAngle<>(element_, "theta"));
   } catch (const std::exception& err) {
     throw RuntimeError{"error loading rotation Z, {}", err.what()};
   }
-  return std::move(transformation);
 }
 
 const std::map<std::string, TransformationLoader::LoaderPtr>
