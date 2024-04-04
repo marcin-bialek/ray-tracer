@@ -20,8 +20,8 @@ std::size_t Image::height() const noexcept {
   return height_;
 }
 
-std::vector<double> Image::ToRGBBuffer() const {
-  std::vector<double> buffer(3 * width_ * height_, 0);
+std::vector<double> Image::ToRGBABuffer() const {
+  std::vector<double> buffer(4 * width_ * height_, 0);
   auto p = buffer.begin();
   for (auto& row : data_) {
     for (auto& pixel : row) {
@@ -29,6 +29,7 @@ std::vector<double> Image::ToRGBBuffer() const {
       *p++ = c.x;
       *p++ = c.y;
       *p++ = c.z;
+      *p++ = 1.0;
     }
   }
   return buffer;

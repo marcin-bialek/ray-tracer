@@ -2,26 +2,22 @@
 
 #include <filesystem>
 #include <memory>
+#include <span>
 
 #include <rt/common/image.hh>
 
 namespace rt {
 
-class ImagerWriter {
+class ImageWriter {
  public:
-  struct Config {
-    std::filesystem::path path;
-    bool gamma_correction = false;
-  };
+  explicit ImageWriter(const std::filesystem::path& path, std::size_t width,
+                       std::size_t height, std::size_t frames = 1,
+                       std::size_t fps = 30);
+  ~ImageWriter() noexcept;
 
-  explicit ImagerWriter(const Config& config);
-
-  ~ImagerWriter() noexcept;
-
-  void Write(const Image& image);
+  void Write(const Image& image, std::size_t frame = 0);
 
  private:
-  Config config_;
   struct Implementation;
   std::unique_ptr<Implementation> impl_;
 };

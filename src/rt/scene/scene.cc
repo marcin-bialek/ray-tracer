@@ -25,7 +25,7 @@ std::span<const std::unique_ptr<Light>> Scene::lights() const noexcept {
 }
 
 Scene& Scene::SetBackground(const Vector3<>& color) noexcept {
-  background_ = color;
+  background_ = color.Clamp(0.0, 1.0);
   return *this;
 }
 

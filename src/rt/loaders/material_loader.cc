@@ -48,8 +48,8 @@ MaterialLoader::MaterialPtr MaterialLoader::LoadMaterialTextured() {
   auto material = std::make_unique<MaterialTextured>();
   try {
     auto name = FirstGetAttr<std::string>(element_, "texture", "name");
-    ImagerLoader image_loader{directory_ / name};
-    material->SetImage(image_loader.Load());
+    ImageLoader loader{directory_ / name};
+    material->SetImage(loader.Load());
   } catch (const std::exception& err) {
     throw RuntimeError{"error loading material textured, {}", err.what()};
   }

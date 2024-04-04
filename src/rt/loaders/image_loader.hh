@@ -7,11 +7,10 @@
 
 namespace rt {
 
-class ImagerLoader {
+class ImageLoader {
  public:
-  explicit ImagerLoader(const std::filesystem::path& path);
-
-  ~ImagerLoader() noexcept;
+  explicit ImageLoader(const std::filesystem::path& path);
+  ~ImageLoader() noexcept;
 
   std::unique_ptr<Image> Load();
 

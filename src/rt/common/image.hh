@@ -14,7 +14,7 @@ class Image {
   std::size_t width() const noexcept;
   std::size_t height() const noexcept;
 
-  std::vector<double> ToRGBBuffer() const;
+  std::vector<double> ToRGBABuffer() const;
 
   Vector3<>& operator[](const std::pair<std::size_t, std::size_t>& position);
   const Vector3<>& operator[](

@@ -9,26 +9,11 @@
 #include <rt/writers/image_writer.hh>
 
 static void ApplyCommandLineArgs(argparse::ArgumentParser& parser,
-                                 rt::Scene& scene) {
-  auto resolution = parser.present<std::vector<std::size_t>>("-r");
-  if (resolution.has_value()) {
-    scene.camera().SetResolution(resolution->at(0), resolution->at(1));
-  }
-  auto background = parser.present<std::vector<double>>("-b");
-  if (background.has_value()) {
-    scene.SetBackground({
-        std::clamp(background->at(0), 0.0, 1.0),
-        std::clamp(background->at(1), 0.0, 1.0),
-        std::clamp(background->at(2), 0.0, 1.0),
-    });
-  }
-  auto max_bounces = parser.present<std::size_t>("max-bounces");
-  if (max_bounces.has_value()) {
-    scene.camera().SetMaxBounces(*max_bounces);
-  }
-}
+                                 rt::Scene& scene);
 
 int main(int argc, char* argv[]) {
+  using namespace std::chrono_literals;
+
   argparse::ArgumentParser parser{"ray-tracer"};
   parser.add_argument("input_file").required().help("XML input file");
   parser.add_argument("-r", "--resolution")
@@ -42,13 +27,6 @@ int main(int argc, char* argv[]) {
   parser.add_argument("-m", "--max-bounces")
       .scan<'u', std::size_t>()
       .help("custom max bounces");
-  parser.add_argument("-g", "--gamma")
-      .default_value(false)
-      .implicit_value(true)
-      .help("use gamma correction");
-  parser.add_argument("-o", "--output")
-      .default_value("image.png")
-      .help("output file");
   parser.add_argument("-d", "--duration")
       .scan<'g', double>()
       .default_value<double>(0)
@@ -57,6 +35,9 @@ int main(int argc, char* argv[]) {
       .scan<'u', std::size_t>()
       .default_value<std::size_t>(30)
       .help("frames per second");
+  parser.add_argument("-o", "--output")
+      .default_value("image.png")
+      .help("output file");
 
   try {
     parser.parse_args(argc, argv);
@@ -83,39 +64,36 @@ int main(int argc, char* argv[]) {
     ApplyCommandLineArgs(parser, *scene);
     std::cout << scene->ToString() << std::endl;
 
-    rt::Renderer renderer{*scene};
-    std::vector<std::unique_ptr<rt::Image>> images;
     auto duration = parser.get<double>("duration");
     auto fps = parser.get<std::size_t>("fps");
-    auto frames = static_cast<std::size_t>(duration * fps);
-    for (std::size_t frame = 0; frame < frames; ++frame) {
-      using namespace std::chrono_literals;
-      scene->SetTime(1000ms * frame / fps);
-      images.push_back(renderer.Render());
-    }
-
-    auto output_file = parser.get<std::string>("output");
-    std::cout << "Saving " << output_file << std::endl;
-
-    if (images.size() == 1) {
-      rt::ImagerWriter::Config iw_config{};
-      iw_config.path = output_file;
-      iw_config.gamma_correction = parser.get<bool>("-g");
-      rt::ImagerWriter writer{iw_config};
-      writer.Write(*images[0]);
-    } else {
-      for (std::size_t i = 0; i < images.size(); ++i) {
-        rt::ImagerWriter::Config iw_config{};
-        iw_config.path = output_file;
-        std::filesystem::create_directories(iw_config.path);
-        iw_config.path = iw_config.path / std::format("{}.png", i);
-        iw_config.gamma_correction = parser.get<bool>("-g");
-        rt::ImagerWriter writer{iw_config};
-        writer.Write(*images[i]);
-      }
+    auto frames = std::max<std::size_t>(1, duration * fps);
+    std::filesystem::path output_file = parser.get<std::string>("output");
+    rt::Renderer renderer{*scene};
+    rt::ImageWriter writer{output_file, scene->camera().width(),
+                           scene->camera().height(), frames, fps};
+    for (std::size_t f = 0; f < frames; ++f) {
+      scene->SetTime(1000ms * f / fps);
+      auto image = renderer.Render();
+      writer.Write(*image, f);
     }
   } catch (const std::exception& err) {
     std::cerr << err.what() << std::endl;
     return EXIT_FAILURE;
+  }
+}
+
+static void ApplyCommandLineArgs(argparse::ArgumentParser& parser,
+                                 rt::Scene& scene) {
+  auto resolution = parser.present<std::vector<std::size_t>>("-r");
+  if (resolution.has_value()) {
+    scene.camera().SetResolution((*resolution)[0], (*resolution)[1]);
+  }
+  auto background = parser.present<std::vector<double>>("-b");
+  if (background.has_value()) {
+    scene.SetBackground({(*background)[0], (*background)[1], (*background)[2]});
+  }
+  auto max_bounces = parser.present<std::size_t>("max-bounces");
+  if (max_bounces.has_value()) {
+    scene.camera().SetMaxBounces(*max_bounces);
   }
 }

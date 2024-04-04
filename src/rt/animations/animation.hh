@@ -85,10 +85,10 @@ class Animation {
   }
 
  protected:
-  std::chrono::milliseconds duration_;
-  std::chrono::milliseconds delay_;
-  std::size_t iterations_;
-  Direction direction_;
+  std::chrono::milliseconds duration_{0};
+  std::chrono::milliseconds delay_{0};
+  std::size_t iterations_{0};
+  Direction direction_{Direction::kForward};
 
   virtual void DoSetTime(double time) noexcept = 0;
 };

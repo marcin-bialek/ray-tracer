@@ -43,10 +43,10 @@ class TransformationLoader {
     } else {
       throw RuntimeError{"unknown animation {}", type};
     }
-    anim->SetDuration(std::chrono::milliseconds{
-        GetOptionalAttr<std::size_t>(element_, "duration").value_or(0)});
-    anim->SetDelay(std::chrono::milliseconds{
-        GetOptionalAttr<std::size_t>(element_, "delay").value_or(0)});
+    anim->SetDuration(std::chrono::milliseconds{static_cast<std::size_t>(
+        1000 * GetOptionalAttr<double>(element_, "duration").value_or(0))});
+    anim->SetDelay(std::chrono::milliseconds{static_cast<std::size_t>(
+        1000 * GetOptionalAttr<double>(element_, "delay").value_or(0))});
     anim->SetIterations(GetOptionalAttr<std::size_t>(element_, "iterations")
                             .value_or(std::numeric_limits<std::size_t>::max()));
     return std::move(anim);
