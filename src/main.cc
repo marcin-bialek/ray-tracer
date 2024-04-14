@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ranges>
 
 #include <argparse/argparse.hh>
 #include <tinyxml2/tinyxml2.hh>
@@ -8,6 +9,7 @@
 #include <rt/renderer/renderer.hh>
 #include <rt/writers/image_writer.hh>
 
+static void ListFormats(const std::string&);
 static void ApplyCommandLineArgs(argparse::ArgumentParser& parser,
                                  rt::Scene& scene);
 
@@ -38,6 +40,11 @@ int main(int argc, char* argv[]) {
   parser.add_argument("-o", "--output")
       .default_value("image.png")
       .help("output file");
+  parser.add_argument("--formats")
+      .action(ListFormats)
+      .default_value(false)
+      .implicit_value(true)
+      .help("list supported formats");
 
   try {
     parser.parse_args(argc, argv);
@@ -80,6 +87,16 @@ int main(int argc, char* argv[]) {
     std::cerr << err.what() << std::endl;
     return EXIT_FAILURE;
   }
+}
+
+static void ListFormats(const std::string&) {
+  auto formats = rt::ImageWriter::Formats();
+  std::cout << "Supported formats: "
+            << std::accumulate(std::next(formats.begin()), formats.end(),
+                               formats[0],
+                               [](auto a, auto b) { return a + ", " + b; })
+            << std::endl;
+  std::exit(EXIT_SUCCESS);
 }
 
 static void ApplyCommandLineArgs(argparse::ArgumentParser& parser,
