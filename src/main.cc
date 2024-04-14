@@ -1,7 +1,9 @@
+#include <csignal>
 #include <iostream>
 #include <ranges>
 
 #include <argparse/argparse.hh>
+#include <indicators/indicators.hh>
 #include <tinyxml2/tinyxml2.hh>
 
 #include <rt/common/exception.hh>
@@ -9,12 +11,20 @@
 #include <rt/renderer/renderer.hh>
 #include <rt/writers/image_writer.hh>
 
+static void OnExit();
+static void OnSignal(int);
 static void ListFormats(const std::string&);
 static void ApplyCommandLineArgs(argparse::ArgumentParser& parser,
                                  rt::Scene& scene);
 
 int main(int argc, char* argv[]) {
   using namespace std::chrono_literals;
+
+  std::atexit(OnExit);
+  signal(SIGINT, OnSignal);
+  signal(SIGABRT, OnSignal);
+  signal(SIGTERM, OnSignal);
+  signal(SIGTSTP, OnSignal);
 
   argparse::ArgumentParser parser{"ray-tracer"};
   parser.add_argument("input_file").required().help("XML input file");
@@ -69,16 +79,27 @@ int main(int argc, char* argv[]) {
     rt::SceneLoader loader{root, directory};
     auto scene = loader.Load();
     ApplyCommandLineArgs(parser, *scene);
-    std::cout << scene->ToString() << std::endl;
+    // std::cout << scene->ToString() << std::endl;
 
     auto duration = parser.get<double>("duration");
     auto fps = parser.get<std::size_t>("fps");
     auto frames = std::max<std::size_t>(1, duration * fps);
     std::filesystem::path output_file = parser.get<std::string>("output");
-    rt::Renderer renderer{*scene};
     rt::ImageWriter writer{output_file, scene->camera().width(),
                            scene->camera().height(), frames, fps};
+
+    indicators::show_console_cursor(false);
+    indicators::ProgressBar bar{
+        indicators::option::BarWidth{50},
+        indicators::option::MaxProgress{frames * scene->camera().height()},
+        indicators::option::ShowPercentage{true},
+        indicators::option::ShowElapsedTime{true},
+        indicators::option::ShowRemainingTime{true}};
+    rt::Renderer renderer{*scene, [&](auto) { bar.tick(); }};
+
     for (std::size_t f = 0; f < frames; ++f) {
+      bar.set_option(indicators::option::PrefixText{
+          std::format("Rendering frame {}/{} ", f + 1, frames)});
       scene->SetTime(1000ms * f / fps);
       auto image = renderer.Render();
       writer.Write(*image, f);
@@ -87,6 +108,15 @@ int main(int argc, char* argv[]) {
     std::cerr << err.what() << std::endl;
     return EXIT_FAILURE;
   }
+}
+
+static void OnExit() {
+  indicators::show_console_cursor(true);
+}
+
+static void OnSignal(int) {
+  OnExit();
+  std::exit(EXIT_SUCCESS);
 }
 
 static void ListFormats(const std::string&) {

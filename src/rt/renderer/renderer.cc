@@ -1,9 +1,5 @@
 #include "renderer.hh"
 
-#include <iostream>
-
-#include <indicators/indicators.hh>
-
 #include <rt/lights/ambient_light.hh>
 #include <rt/lights/parallel_light.hh>
 
@@ -11,20 +7,14 @@ namespace rt {
 
 static constexpr auto kEpsilon = 0.0001;
 
-Renderer::Renderer(const Scene& scene) noexcept
-    : scene_{scene}, camera_{scene.camera()}, viewport_{camera_.viewport()} {}
+Renderer::Renderer(const Scene& scene, ScanlineCallback&& cb) noexcept
+    : callback_{std::move(cb)},
+      scene_{scene},
+      camera_{scene.camera()},
+      viewport_{camera_.viewport()} {}
 
 std::unique_ptr<Image> Renderer::Render() {
   auto image = std::make_unique<Image>(camera_.width(), camera_.height());
-
-  indicators::show_console_cursor(false);
-  indicators::ProgressBar bar{indicators::option::BarWidth{50},
-                              indicators::option::MaxProgress{camera_.height()},
-                              indicators::option::PrefixText{"Rendering "},
-                              indicators::option::ShowPercentage{true},
-                              indicators::option::ShowElapsedTime{true},
-                              indicators::option::ShowRemainingTime{true}};
-
   for (std::size_t y = 0; y < camera_.height(); ++y) {
     auto row = viewport_.pixel_origin + viewport_.dv * y;
     for (std::size_t x = 0; x < camera_.width(); ++x) {
@@ -33,10 +23,8 @@ std::unique_ptr<Image> Renderer::Render() {
       auto ray = Ray{camera_.position(), direction};
       (*image)[{x, y}] = ProcessRay(ray, camera_.max_bounces());
     }
-    bar.tick();
+    callback_(y);
   }
-
-  indicators::show_console_cursor(true);
   return std::move(image);
 }
 

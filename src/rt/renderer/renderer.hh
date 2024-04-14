@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -13,11 +14,14 @@ namespace rt {
 
 class Renderer {
  public:
-  explicit Renderer(const Scene& scene) noexcept;
+  using ScanlineCallback = std::function<void(std::size_t)>;
+
+  explicit Renderer(const Scene& scene, ScanlineCallback&& cb) noexcept;
 
   std::unique_ptr<Image> Render();
 
  private:
+  const ScanlineCallback callback_;
   const Scene& scene_;
   const Camera& camera_;
   Viewport viewport_;
